@@ -6,7 +6,7 @@ MINOR=$(grep -m1 PROJECT_VERSION_MINOR ${SRCDIR}/CMakeLists.txt | awk '{print $3
 PATCH=$(grep -m1 PROJECT_VERSION_PATCH ${SRCDIR}/CMakeLists.txt | awk '{print $3}' | sed 's/.$//g')
 VERSION="${MAJOR}.${MINOR}.${PATCH}"
 
-ARCHIVE="quadro-plugins"
+ARCHIVE="quadro-core"
 FILES="AUTHORS CHANGELOG COPYING README.md"
 IGNORELIST="build *.qm *.cppcheck .git* .kdev4 sources.kdev4"
 # update submodules

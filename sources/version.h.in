@@ -1,0 +1,41 @@
+#ifndef VERSION_H
+#define VERSION_H
+
+// information
+#define NAME "Quadro Plugins"
+#define VERSION "@PROJECT_VERSION@"
+#define COMMIT_SHA "@PROJECT_COMMIT_SHA@"
+#define AUTHOR "@PROJECT_AUTHOR@"
+#define TRANSLATORS ""
+#define EMAIL "@PROJECT_CONTACT@"
+#define LICENSE "@PROJECT_LICENSE@"
+#define TRDPARTY_LICENSE "tasks,BSD,https://github.com/mhogomchungu/tasks"
+
+// links
+#define HOMEPAGE "https://arcanis.name/projects/quadro/"
+#define REPOSITORY "https://github.com/arcan1s/quadro-core"
+#define BUGTRACKER "https://github.com/arcan1s/quadro-core/issues"
+#define TRANSLATION "https://github.com/arcan1s/quadro-core/issues/1"
+#define AUR_PACKAGES "https://aur.archlinux.org/pkgbase/quadro-core/"
+
+// build information
+#define BUILD_DATE "@CURRENT_DATE@"
+#define DATE "2015-@CURRENT_YEAR@"
+
+// cmake properties
+#define CMAKE_BUILD_TYPE "@CMAKE_BUILD_TYPE@"
+#define CMAKE_CXX_COMPILER "@CMAKE_CXX_COMPILER@"
+#define CMAKE_CXX_FLAGS "@CMAKE_CXX_FLAGS@"
+#define CMAKE_CXX_FLAGS_DEBUG "@CMAKE_CXX_FLAGS_DEBUG@"
+#define CMAKE_CXX_FLAGS_RELEASE "@CMAKE_CXX_FLAGS_RELEASE@"
+#define CMAKE_CXX_FLAGS_OPTIMIZATION "@CMAKE_CXX_FLAGS_OPTIMIZATION@"
+#define CMAKE_DEFINITIONS "@CMAKE_DEFINITIONS@"
+#define CMAKE_INSTALL_PREFIX "@CMAKE_INSTALL_PREFIX@"
+#define CMAKE_SHARED_LINKER_FLAGS "@CMAKE_SHARED_LINKER_FLAGS@"
+// components
+#define BUILD_DEB_PACKAGE "@BUILD_DEB_PACKAGE@"
+#define BUILD_RPM_PACKAGE "@BUILD_RPM_PACKAGE@"
+#define CLANGFORMAT_EXECUTABLE "@CLANGFORMAT_EXECUTABLE@"
+#define CPPCHECK_EXECUTABLE "@CPPCHECK_EXECUTABLE@"
+
+#endif /* VERSION_H */
