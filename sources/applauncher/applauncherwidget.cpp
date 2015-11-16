@@ -37,6 +37,10 @@ AppLauncher::~AppLauncher()
     m_categoryButtons.clear();
     m_categoryWidgets.clear();
     // ui objects are already removed
+
+    delete m_toolBar;
+    delete m_searchBar;
+    delete m_stackedWidget;
 }
 
 
@@ -55,7 +59,7 @@ QString AppLauncher::name() const
 
 QWidget *AppLauncher::widget()
 {
-    return m_mainWindow;
+    return this;
 }
 
 
@@ -70,15 +74,15 @@ void AppLauncher::init()
     m_categoryWidgets.clear();
 
     QStringList categories = m_core->launcher()->availableCategories();
-    foreach (const QString cat, categories) {
+    for (auto cat : categories) {
         m_categoryButtons.append(m_toolBar->addAction(cat));
-        m_categoryWidgets.append(new QuadroWidget(m_mainWindow, itemSize().width()));
+        m_categoryWidgets.append(new QuadroWidget(this, itemSize().width()));
         m_stackedWidget->addWidget(m_categoryWidgets.last());
         initCategory(cat, m_categoryWidgets.last()->widget());
     }
 
     // search widget
-    m_categoryWidgets.append(new QuadroWidget(m_mainWindow, itemSize().width()));
+    m_categoryWidgets.append(new QuadroWidget(this, itemSize().width()));
     m_stackedWidget->addWidget(m_categoryWidgets.last());
 }
 
@@ -91,12 +95,11 @@ void AppLauncher::setArgs(QuadroCore *core, const QVariantHash settings)
     m_core = core;
 
     // create ui
-    m_mainWindow = new QMainWindow(nullptr);
-    m_toolBar = new QToolBar(m_mainWindow);
-    m_mainWindow->addToolBar(m_toolBar);
+    m_toolBar = new QToolBar(this);
+    addToolBar(m_toolBar);
 
     // ui
-    QWidget *widget = new QWidget(m_mainWindow);
+    QWidget *widget = new QWidget(this);
     m_searchBar = new QLineEdit(widget);
     m_searchBar->setPlaceholderText(QApplication::translate("AppLauncher", "Type application name here"));
     m_stackedWidget = new QStackedWidget(widget);
@@ -106,9 +109,8 @@ void AppLauncher::setArgs(QuadroCore *core, const QVariantHash settings)
     layout->addWidget(m_stackedWidget);
     widget->setLayout(layout);
 
-    m_mainWindow->setCentralWidget(widget);
+    setCentralWidget(widget);
     // handle child events
-    m_mainWindow->installEventFilter(this);
     m_toolBar->installEventFilter(this);
     m_searchBar->installEventFilter(this);
     m_stackedWidget->installEventFilter(this);
@@ -144,6 +146,12 @@ void AppLauncher::changeCategoryByAction(QAction *action)
 }
 
 
+void AppLauncher::hideMainWindow()
+{
+    DBusOperations::sendRequestToUi(QString("Hide"));
+}
+
+
 void AppLauncher::runApplication()
 {
     m_core->recently()->addItem(static_cast<AppIconWidget *>(sender())->associatedItem());
@@ -162,13 +170,28 @@ void AppLauncher::runCustomApplication()
     ApplicationItem *item = new ApplicationItem(this, exec);
     item->setExec(exec);
 
-    if (item->launch())
+    if (item->launch()) {
         m_core->recently()->addItem(item);
-    else
-        QMessageBox::critical(m_mainWindow, QApplication::translate("AppLauncher", "Error"),
-                              QApplication::translate("AppLauncher", "Could not run application %1").arg(exec));
+        DBusOperations::sendRequestToUi(QString("Hide"));
+    } else {
+        QMessageBox::critical(this,
+                              QApplication::translate("AppLauncher", "Error"),
+                              QApplication::translate("AppLauncher",
+                                                      "Could not run application %1").arg(
+                                  exec));
+    }
 
-    DBusOperations::sendRequestToUi(QString("Hide"));
+}
+
+
+void AppLauncher::runStandaloneApplication(const QStringList exec,
+                                           const QString name)
+{
+    qCDebug(LOG_PL) << "Exec" << exec;
+    qCDebug(LOG_PL) << "Application name" << name;
+
+    DBusOperations::sendRequestToUi(QString("RunContainer"),
+                                    QVariantList() << exec << name);
 }
 
 
@@ -176,22 +199,20 @@ void AppLauncher::showSearchResults(const QString search)
 {
     qCDebug(LOG_PL) << "Search substring" << search;
 
-    // clear
-    QLayoutItem *item;
-    while ((item = m_categoryWidgets.last()->widget()->layout()->takeAt(0))) {
-        delete item->widget();
-        delete item;
-    }
+    m_categoryWidgets.last()->clearLayout();
 
     // return if none to do here
     if (search.isEmpty()) return m_stackedWidget->setCurrentIndex(0);
     // add items
     QMap<QString, ApplicationItem *> apps = m_core->recently()->applicationsBySubstr(search);
     QMap<QString, ApplicationItem *> launcherApps = m_core->launcher()->applicationsBySubstr(search);
-    foreach (ApplicationItem *app, apps.values() + launcherApps.values()) {
+    for (auto app : apps.values() + launcherApps.values()) {
         QWidget *wItem = new AppIconWidget(app, itemSize(), m_categoryWidgets.last()->widget());
         m_categoryWidgets.last()->widget()->layout()->addWidget(wItem);
         connect(wItem, SIGNAL(widgetPressed()), this, SLOT(runApplication()));
+        connect(wItem, SIGNAL(applicationIsRunning()), this, SLOT(hideMainWindow()));
+        connect(wItem, SIGNAL(standaloneApplicaitonRequested(const QStringList, const QString)),
+                this, SLOT(runStandaloneApplication(const QStringList, const QString)));
     }
 
     return m_stackedWidget->setCurrentIndex(m_stackedWidget->count() - 1);
@@ -212,9 +233,12 @@ void AppLauncher::initCategory(const QString category, QWidget *widget)
     qCDebug(LOG_PL) << "Category" << category;
 
     QMap<QString, ApplicationItem *> apps = m_core->launcher()->applicationsByCategory(category);
-    foreach (ApplicationItem *app, apps.values()) {
-        QWidget *wItem = new AppIconWidget(app, itemSize(), widget);
+    for (auto app : apps.values()) {
+            QWidget *wItem = new AppIconWidget(app, itemSize(), widget);
         widget->layout()->addWidget(wItem);
         connect(wItem, SIGNAL(widgetPressed()), this, SLOT(runApplication()));
+        connect(wItem, SIGNAL(applicationIsRunning()), this, SLOT(hideMainWindow()));
+        connect(wItem, SIGNAL(standaloneApplicaitonRequested(const QStringList, const QString)),
+                this, SLOT(runStandaloneApplication(const QStringList, const QString)));
     }
 }

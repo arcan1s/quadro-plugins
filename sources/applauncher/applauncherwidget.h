@@ -30,7 +30,7 @@ class QStackedWidget;
 class QToolBar;
 class QuadroWidget;
 
-class AppLauncher : public QObject, TabPluginInterface
+class AppLauncher : public QMainWindow, TabPluginInterface
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "core.quadro.applauncher/1.0")
@@ -56,8 +56,10 @@ protected:
 
 private slots:
     void changeCategoryByAction(QAction *action);
+    void hideMainWindow();
     void runApplication();
     void runCustomApplication();
+    void runStandaloneApplication(const QStringList exec, const QString name);
     void showSearchResults(const QString search);
 
 private:
@@ -66,7 +68,6 @@ private:
     QList<QuadroWidget *> m_categoryWidgets;
     // core ui
     QLineEdit *m_searchBar = nullptr;
-    QMainWindow *m_mainWindow = nullptr;
     QStackedWidget *m_stackedWidget = nullptr;
     QToolBar *m_toolBar = nullptr;
     // backend
