@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 
-#include "applauncherwidget.h"
+#include "applauncher.h"
 
 #include <QAction>
 #include <QApplication>
@@ -36,7 +36,6 @@ AppLauncher::~AppLauncher()
 
     m_categoryButtons.clear();
     m_categoryWidgets.clear();
-    // ui objects are already removed
 
     delete m_toolBar;
     delete m_searchBar;
@@ -53,7 +52,7 @@ QSize AppLauncher::itemSize()
 
 QString AppLauncher::name() const
 {
-    return QApplication::translate("AppLauncher", "Launcher");
+    return tr("Launcher");
 }
 
 
@@ -101,7 +100,7 @@ void AppLauncher::setArgs(QuadroCore *core, const QVariantHash settings)
     // ui
     QWidget *widget = new QWidget(this);
     m_searchBar = new QLineEdit(widget);
-    m_searchBar->setPlaceholderText(QApplication::translate("AppLauncher", "Type application name here"));
+    m_searchBar->setPlaceholderText(tr("Type application name here"));
     m_stackedWidget = new QStackedWidget(widget);
     // layout
     QVBoxLayout *layout = new QVBoxLayout(widget);
@@ -175,10 +174,8 @@ void AppLauncher::runCustomApplication()
         DBusOperations::sendRequestToUi(QString("Hide"));
     } else {
         QMessageBox::critical(this,
-                              QApplication::translate("AppLauncher", "Error"),
-                              QApplication::translate("AppLauncher",
-                                                      "Could not run application %1").arg(
-                                  exec));
+                              tr("Error"),
+                              tr("Could not run application %1").arg(exec));
     }
 
 }

@@ -16,8 +16,8 @@
  ***************************************************************************/
 
 
-#ifndef APPLAUNCHERWIDGET_H
-#define APPLAUNCHERWIDGET_H
+#ifndef APPLAUNCHER_H
+#define APPLAUNCHER_H
 
 #include <QMainWindow>
 
@@ -46,7 +46,7 @@ public:
     void quit() {};
     void readSettings(const QString desktopPath) {};
     bool saveSettings(const QString desktopPath) { return true; };
-    void setArgs(QuadroCore *core, const QVariantHash settings = QVariantHash());
+    void setArgs(QuadroCore *core, const QVariantHash settings);
 
 public slots:
     void changeCategory(const int index);
@@ -78,4 +78,4 @@ private:
 };
 
 
-#endif /* APPLAUNCHERWIDGET_H */
+#endif /* APPLAUNCHER_H */
