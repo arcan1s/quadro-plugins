@@ -16,41 +16,35 @@
  ***************************************************************************/
 
 
-#ifndef PCSTATUSPLUGIN_H
-#define PCSTATUSPLUGIN_H
+#ifndef PCSTATUSHELPER_H
+#define PCSTATUSHELPER_H
 
-#include <QMainWindow>
-
-#include <quadrocore/quadro.h>
+#include <QObject>
 
 
-class PCStatusHelper;
-
-class PCStatusPlugin : public QObject, PluginInterface
+class PCStatusHelper : public QObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "core.quadro.pcstatus/1.0")
-    Q_INTERFACES(PluginInterface)
 
 public:
-    virtual ~PCStatusPlugin();
-    QString background() const { return QString(); };
-    QWidget *configWidget();
-    QString data() const;
-    QString name() const;
-    void action() const {};
-    void init();
-    void quit() {};
-    void readSettings(const QString configPath);
-    bool saveSettings(const QString configPath);
-    void update();
-    int updateInterval() const;
+    explicit PCStatusHelper(QObject *parent);
+    virtual ~PCStatusHelper();
+    float updateCPUStats();
+    float updateDownStats(const QString device, const int interval);
+    float updateMemoryStats();
+    QString updateNetworkDevice();
+    float updateSwapStats();
+    float updateUpStats(const QString device, const int interval);
 
 private:
-    QVariantHash m_configuration;
-    QString m_stats;
-    PCStatusHelper *m_helper = nullptr;
+    struct {
+        float user = 0.0;
+        float system = 0.0;
+        float idle = 0.0;
+    } m_cpuStats;
+    float m_downStats = 0.0;
+    float m_upStats = 0.0;
 };
 
 
-#endif /* PCSTATUSPLUGIN_H */
+#endif /* PCSTATUSHELPER_H */

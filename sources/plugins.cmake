@@ -2,4 +2,4 @@
 quadro_install_plugin("applauncher")
 quadro_install_plugin("filemanager")
 # plugins
-quadro_install_plugin("pcstatus")
+quadro_install_plugin("pcstatus" "pcstatus" ${Qt5Network_LIBRARIES})

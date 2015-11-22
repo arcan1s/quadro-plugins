@@ -18,14 +18,16 @@
 
 #include "pcstatusplugin.h"
 
-#include <QNetworkInterface>
 #include <QSettings>
-#include <QTextCodec>
+
+#include "pcstatushelper.h"
 
 
 PCStatusPlugin::~PCStatusPlugin()
 {
     qCDebug(LOG_PL) << __PRETTY_FUNCTION__;
+
+    delete m_helper;
 }
 
 
@@ -44,6 +46,12 @@ QString PCStatusPlugin::data() const
 QString PCStatusPlugin::name() const
 {
     return tr("PC status");
+}
+
+
+void PCStatusPlugin::init()
+{
+    m_helper = new PCStatusHelper(this);
 }
 
 
@@ -84,172 +92,30 @@ bool PCStatusPlugin::saveSettings(const QString configPath)
 void PCStatusPlugin::update()
 {
     // cpu utilization
-    float cpu = updateCPUStats();
+    float cpu = m_helper->updateCPUStats();
     // memory
-    float mem = updateMemoryStats();
+    float mem = m_helper->updateMemoryStats();
     // swap
-    float swap = updateSwapStats();
+    float swap = m_helper->updateSwapStats();
     // network
-    m_networkDevice = updateNetworkDevice();
-    float down = updateDownStats();
-    float up = updateUpStats();
+    QString networkDevice = m_helper->updateNetworkDevice();
+    float down = m_helper->updateDownStats(networkDevice, m_configuration[QString("Update")].toInt());
+    float up = m_helper->updateUpStats(networkDevice, m_configuration[QString("Update")].toInt());
 
-    m_stats = tr("CPU: %1").arg(cpu, 5, 'f', 1);
+    QStringList dataStats;
+    if (m_configuration[QString("ShowCPU")].toBool())
+        dataStats.append(tr("CPU: %1").arg(cpu, 5, 'f', 1));
+    if (m_configuration[QString("ShowMem")].toBool())
+        dataStats.append(tr("Memory: %1").arg(mem, 5, 'f', 1));
+    if (m_configuration[QString("ShowSwap")].toBool())
+        dataStats.append(tr("Swap: %1").arg(swap, 5, 'f', 1));
+    if (m_configuration[QString("ShowNet")].toBool())
+        dataStats.append(tr("Network speed: %1/%2").arg(down, 4, 'f', 0).arg(up, 4, 'f', 0));
+    m_stats = dataStats.join(QChar('\n'));
 }
 
 
 int PCStatusPlugin::updateInterval() const
 {
     return m_configuration[QString("Update")].toInt();
-}
-
-
-float PCStatusPlugin::updateCPUStats()
-{
-    float currentUser = 0.0;
-    float currentSystem = 0.0;
-    float currentIdle = 0.0;
-
-    QFile cpuStatsFile(QString("/proc/stat"));
-    if (cpuStatsFile.open(QIODevice::ReadOnly)) {
-        QString textData = QTextCodec::codecForMib(106)->toUnicode(cpuStatsFile.readAll()).trimmed();
-        QStringList totalCpuValues = textData.split(QChar('\n')).at(0).split(QChar(' '));
-
-        // some magic here. See man proc(5) for more details
-        if (totalCpuValues.count() >= 5) {
-            // user
-            float user = totalCpuValues.at(1).toFloat();
-            currentUser = user - m_cpuStats.user;
-            m_cpuStats.user = user;
-            // system
-            float system = totalCpuValues.at(3).toFloat();
-            currentSystem = system - m_cpuStats.system;
-            m_cpuStats.system = system;
-            // idle
-            float idle = totalCpuValues.at(4).toFloat();
-            currentIdle = idle - m_cpuStats.idle;
-            m_cpuStats.idle = idle;
-        }
-        cpuStatsFile.close();
-    } else {
-        qCWarning(LOG_PL) << "Could not open" << QString("/proc/stat");
-    }
-
-    // return current value
-    return 100.0 * (currentSystem + currentUser) / (currentSystem + currentUser + currentIdle);
-}
-
-
-float PCStatusPlugin::updateDownStats()
-{
-    float down = 0.0;
-
-    QFile downStatsFile(QString("/sys/class/net/%1/statistics/rx_bytes").arg(m_networkDevice));
-    if (downStatsFile.open(QIODevice::ReadOnly)) {
-        QString textData = QTextCodec::codecForMib(106)->toUnicode(downStatsFile.readAll()).trimmed();
-        float currentDown = textData.toFloat();
-        down = (currentDown - m_downStats) / (1024.0 * m_configuration[QString("Update")].toFloat());
-        m_downStats = currentDown;
-
-        downStatsFile.close();
-    } else {
-        qCWarning(LOG_PL) << "Could not open" << QString("/sys/class/net/%1/statistics/rx_bytes").arg(m_networkDevice);
-    }
-
-    return down;
-}
-
-
-float PCStatusPlugin::updateMemoryStats()
-{
-    float total = 0.0;
-    float free = 0.0;
-    float buffers = 0.0;
-    float cached = 0.0;
-
-    QFile memStatsFile(QString("/proc/meminfo"));
-    if (memStatsFile.open(QIODevice::ReadOnly)) {
-        QString textData = QTextCodec::codecForMib(106)->toUnicode(memStatsFile.readAll()).trimmed();
-        QStringList memValues = textData.split(QChar('\n'));
-        for (auto data : memValues) {
-            if (data.startsWith(QString("MemTotal:")))
-                total = data.split(QChar(' '), QString::SkipEmptyParts).at(1).toFloat();
-            else if (data.startsWith(QString("MemFree:")))
-                free = data.split(QChar(' '), QString::SkipEmptyParts).at(1).toFloat();
-            else if (data.startsWith(QString("Buffers:")))
-                buffers = data.split(QChar(' '), QString::SkipEmptyParts).at(1).toFloat();
-            else if (data.startsWith(QString("Cached:")))
-                cached = data.split(QChar(' '), QString::SkipEmptyParts).at(1).toFloat();
-        }
-
-        memStatsFile.close();
-    } else {
-        qCWarning(LOG_PL) << "Could not open" << QString("/proc/meminfo");
-    }
-
-    return 100.0 * (total - free - buffers - cached) / total;
-}
-
-
-QString PCStatusPlugin::updateNetworkDevice()
-{
-    QString device = QString("lo");
-    QList<QNetworkInterface> rawInterfaceList = QNetworkInterface::allInterfaces();
-    qCInfo(LOG_PL) << "Devices" << rawInterfaceList;
-    for (auto interface : rawInterfaceList) {
-        if ((interface.flags().testFlag(QNetworkInterface::IsLoopBack))
-            || (interface.flags().testFlag(QNetworkInterface::IsPointToPoint)))
-            continue;
-        if (interface.addressEntries().isEmpty())
-            continue;
-        device = interface.name();
-        break;
-    }
-
-    return device;
-}
-
-
-float PCStatusPlugin::updateSwapStats()
-{
-    float total = 0.0;
-    float free = 0.0;
-
-    QFile memStatsFile(QString("/proc/meminfo"));
-    if (memStatsFile.open(QIODevice::ReadOnly)) {
-        QString textData = QTextCodec::codecForMib(106)->toUnicode(memStatsFile.readAll()).trimmed();
-        QStringList memValues = textData.split(QChar('\n'));
-        for (auto data : memValues) {
-            if (data.startsWith(QString("SwapTotal:")))
-                total = data.split(QChar(' '), QString::SkipEmptyParts).at(1).toFloat();
-            else if (data.startsWith(QString("SwapFree:")))
-                free = data.split(QChar(' '), QString::SkipEmptyParts).at(1).toFloat();
-        }
-
-        memStatsFile.close();
-    } else {
-        qCWarning(LOG_PL) << "Could not open" << QString("/proc/meminfo");
-    }
-
-    return 100.0 * (total - free) / total;
-}
-
-
-float PCStatusPlugin::updateUpStats()
-{
-    float up = 0.0;
-
-    QFile upStatsFile(QString("/sys/class/net/%1/statistics/tx_bytes").arg(m_networkDevice));
-    if (upStatsFile.open(QIODevice::ReadOnly)) {
-        QString textData = QTextCodec::codecForMib(106)->toUnicode(upStatsFile.readAll()).trimmed();
-        float currentUp = textData.toFloat();
-        up = (currentUp - m_upStats) / (1024.0 * m_configuration[QString("Update")].toFloat());
-        m_downStats = currentUp;
-
-        upStatsFile.close();
-    } else {
-        qCWarning(LOG_PL) << "Could not open" << QString("/sys/class/net/%1/statistics/tx_bytes").arg(m_networkDevice);
-    }
-
-    return up;
 }
