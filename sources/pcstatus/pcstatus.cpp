@@ -16,14 +16,14 @@
  ***************************************************************************/
 
 
-#include "pcstatusplugin.h"
+#include "pcstatus.h"
 
 #include <QSettings>
 
 #include "pcstatushelper.h"
 
 
-PCStatusPlugin::~PCStatusPlugin()
+PCStatus::~PCStatus()
 {
     qCDebug(LOG_PL) << __PRETTY_FUNCTION__;
 
@@ -31,31 +31,31 @@ PCStatusPlugin::~PCStatusPlugin()
 }
 
 
-QWidget *PCStatusPlugin::configWidget()
+QWidget *PCStatus::configWidget()
 {
     return nullptr;
 }
 
 
-QString PCStatusPlugin::data() const
+QString PCStatus::data() const
 {
     return m_stats;
 }
 
 
-QString PCStatusPlugin::name() const
+QString PCStatus::name() const
 {
     return tr("PC status");
 }
 
 
-void PCStatusPlugin::init()
+void PCStatus::init()
 {
     m_helper = new PCStatusHelper(this);
 }
 
 
-void PCStatusPlugin::readSettings(const QString configPath)
+void PCStatus::readSettings(const QString configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
@@ -70,7 +70,7 @@ void PCStatusPlugin::readSettings(const QString configPath)
 }
 
 
-bool PCStatusPlugin::saveSettings(const QString configPath)
+bool PCStatus::saveSettings(const QString configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
@@ -89,7 +89,7 @@ bool PCStatusPlugin::saveSettings(const QString configPath)
 }
 
 
-void PCStatusPlugin::update()
+void PCStatus::update()
 {
     // cpu utilization
     float cpu = m_helper->updateCPUStats();
@@ -115,7 +115,7 @@ void PCStatusPlugin::update()
 }
 
 
-int PCStatusPlugin::updateInterval() const
+int PCStatus::updateInterval() const
 {
     return m_configuration[QString("Update")].toInt();
 }

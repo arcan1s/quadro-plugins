@@ -16,24 +16,22 @@
  ***************************************************************************/
 
 
-#ifndef PCSTATUSPLUGIN_H
-#define PCSTATUSPLUGIN_H
-
-#include <QMainWindow>
+#ifndef PCSTATUS_H
+#define PCSTATUS_H
 
 #include <quadrocore/quadro.h>
 
 
 class PCStatusHelper;
 
-class PCStatusPlugin : public QObject, PluginInterface
+class PCStatus : public QObject, PluginInterface
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "core.quadro.pcstatus/1.0")
     Q_INTERFACES(PluginInterface)
 
 public:
-    virtual ~PCStatusPlugin();
+    virtual ~PCStatus();
     QString background() const { return QString(); };
     QWidget *configWidget();
     QString data() const;
@@ -53,4 +51,4 @@ private:
 };
 
 
-#endif /* PCSTATUSPLUGIN_H */
+#endif /* PCSTATUS_H */
