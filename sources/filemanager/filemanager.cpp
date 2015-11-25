@@ -83,19 +83,19 @@ void FileManager::init()
 }
 
 
-void FileManager::readSettings(const QString desktopPath)
+void FileManager::readSettings(const QString configPath)
 {
-    qCDebug(LOG_PL) << "Configuration path" << desktopPath;
+    qCDebug(LOG_PL) << "Configuration path" << configPath;
 
-    m_configuration = m_config->readSettings(desktopPath);
+    m_configuration = m_config->readSettings(configPath);
 }
 
 
-bool FileManager::saveSettings(const QString desktopPath)
+bool FileManager::saveSettings(const QString configPath)
 {
-    qCDebug(LOG_PL) << "Configuration path" << desktopPath;
+    qCDebug(LOG_PL) << "Configuration path" << configPath;
 
-    return m_config->saveSettings(desktopPath, m_configuration);
+    return m_config->saveSettings(configPath, m_configuration);
 }
 
 

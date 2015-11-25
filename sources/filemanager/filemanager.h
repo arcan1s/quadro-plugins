@@ -49,8 +49,8 @@ public:
     QWidget *widget();
     void init();
     void quit() {};
-    void readSettings(const QString desktopPath);
-    bool saveSettings(const QString desktopPath);
+    void readSettings(const QString configPath);
+    bool saveSettings(const QString configPath);
     void setArgs(QuadroCore *core, const QVariantHash settings);
 
 public slots:

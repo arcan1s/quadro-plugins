@@ -32,8 +32,8 @@ class FileManagerSettings : public QWidget
 public:
     explicit FileManagerSettings(QWidget *parent = nullptr);
     virtual ~FileManagerSettings();
-    QVariantHash readSettings(const QString desktopPath);
-    bool saveSettings(const QString desktopPath, const QVariantHash configuration) const;
+    QVariantHash readSettings(const QString configPath);
+    bool saveSettings(const QString configPath, const QVariantHash configuration) const;
 
 protected:
     void keyPressEvent(QKeyEvent *pressedKey);

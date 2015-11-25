@@ -15,42 +15,30 @@
  *   along with quadro. If not, see http://www.gnu.org/licenses/           *
  ***************************************************************************/
 
+#ifndef PCSTATUSSETTINGS_H
+#define PCSTATUSSETTINGS_H
 
-#ifndef PCSTATUS_H
-#define PCSTATUS_H
-
-#include <quadrocore/quadro.h>
+#include <QWidget>
 
 
-class PCStatusHelper;
+namespace Ui {
 class PCStatusSettings;
+}
 
-class PCStatus : public QObject, PluginInterface
+class PCStatusSettings : public QWidget
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "core.quadro.pcstatus/1.0")
-    Q_INTERFACES(PluginInterface)
 
 public:
-    virtual ~PCStatus();
-    QString background() const { return QString(); };
-    QWidget *configWidget();
-    QString data() const;
-    QString name() const;
-    void action() const {};
-    void init();
-    void quit() {};
-    void readSettings(const QString configPath);
-    bool saveSettings(const QString configPath);
-    void update();
-    int updateInterval() const;
+    explicit PCStatusSettings(QWidget *parent = nullptr);
+    virtual ~PCStatusSettings();
+    QVariantHash readSettings(const QString configPath);
+    bool saveSettings(const QString configPath, const QVariantHash configuration) const;
 
 private:
-    QVariantHash m_configuration;
-    QString m_stats;
-    PCStatusHelper *m_helper = nullptr;
-    PCStatusSettings *m_config = nullptr;
+    Ui::PCStatusSettings *ui;
+    void init(const QVariantHash configuration);
 };
 
 
-#endif /* PCSTATUS_H */
+#endif /* PCSTATUSSETTINGS_H */

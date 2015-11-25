@@ -49,11 +49,11 @@ FileManagerSettings::~FileManagerSettings()
 }
 
 
-QVariantHash FileManagerSettings::readSettings(const QString desktopPath)
+QVariantHash FileManagerSettings::readSettings(const QString configPath)
 {
-    qCDebug(LOG_PL) << "Configuration path" << desktopPath;
+    qCDebug(LOG_PL) << "Configuration path" << configPath;
 
-    QSettings settings(desktopPath, QSettings::IniFormat);
+    QSettings settings(configPath, QSettings::IniFormat);
     settings.setIniCodec("UTF-8");
 
     QVariantHash configuration;
@@ -71,13 +71,13 @@ QVariantHash FileManagerSettings::readSettings(const QString desktopPath)
 }
 
 
-bool FileManagerSettings::saveSettings(const QString desktopPath,
+bool FileManagerSettings::saveSettings(const QString configPath,
                                        const QVariantHash configuration) const
 {
-    qCDebug(LOG_PL) << "Configuration path" << desktopPath;
+    qCDebug(LOG_PL) << "Configuration path" << configPath;
     qCDebug(LOG_PL) << "Settings to save" << configuration;
 
-    QSettings settings(desktopPath, QSettings::IniFormat);
+    QSettings settings(configPath, QSettings::IniFormat);
     settings.setIniCodec("UTF-8");
 
     // general settings

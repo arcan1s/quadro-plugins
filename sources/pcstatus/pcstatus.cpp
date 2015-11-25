@@ -18,22 +18,22 @@
 
 #include "pcstatus.h"
 
-#include <QSettings>
-
 #include "pcstatushelper.h"
+#include "pcstatussettings.h"
 
 
 PCStatus::~PCStatus()
 {
     qCDebug(LOG_PL) << __PRETTY_FUNCTION__;
 
+    delete m_config;
     delete m_helper;
 }
 
 
 QWidget *PCStatus::configWidget()
 {
-    return nullptr;
+    return m_config;
 }
 
 
@@ -51,6 +51,7 @@ QString PCStatus::name() const
 
 void PCStatus::init()
 {
+    m_config = new PCStatusSettings(nullptr);
     m_helper = new PCStatusHelper(this);
 }
 
@@ -59,14 +60,7 @@ void PCStatus::readSettings(const QString configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
-    QSettings settings(configPath, QSettings::IniFormat);
-    settings.setIniCodec("UTF-8");
-
-    m_configuration[QString("ShowCPU")] = settings.value(QString("ShowCPU"), true);
-    m_configuration[QString("ShowMem")] = settings.value(QString("ShowMem"), true);
-    m_configuration[QString("ShowNet")] = settings.value(QString("ShowNet"), true);
-    m_configuration[QString("ShowSwap")] = settings.value(QString("ShowSwap"), true);
-    m_configuration[QString("Update")] = settings.value(QString("Update"), 1000);
+    m_configuration = m_config->readSettings(configPath);
 }
 
 
@@ -74,18 +68,7 @@ bool PCStatus::saveSettings(const QString configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
-    QSettings settings(configPath, QSettings::IniFormat);
-    settings.setIniCodec("UTF-8");
-
-    settings.setValue(QString("ShowCPU"), m_configuration[QString("ShowCPU")]);
-    settings.setValue(QString("ShowMem"), m_configuration[QString("ShowMem")]);
-    settings.setValue(QString("ShowNet"), m_configuration[QString("ShowNet")]);
-    settings.setValue(QString("ShowSwap"), m_configuration[QString("ShowSwap")]);
-    settings.setValue(QString("Update"), m_configuration[QString("Update")]);
-
-    settings.sync();
-
-    return settings.status() == QSettings::NoError;
+    return m_config->saveSettings(configPath, m_configuration);
 }
 
 
