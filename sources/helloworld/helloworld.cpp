@@ -67,6 +67,12 @@ void HelloWorld::init()
 }
 
 
+QSize HelloWorld::minimalSize() const
+{
+    return QSize(1, 1);
+}
+
+
 void HelloWorld::readSettings(const QString configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;

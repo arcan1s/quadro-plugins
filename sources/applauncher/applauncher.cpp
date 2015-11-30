@@ -23,6 +23,7 @@
 #include <QKeyEvent>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QSettings>
 #include <QStackedWidget>
 #include <QToolBar>
 #include <QVBoxLayout>
@@ -64,6 +65,8 @@ QWidget *AppLauncher::widget()
 
 void AppLauncher::init()
 {
+    addToolBar(m_toolBarArea, m_toolBar);
+
     // clear
     QWidget *wid;
     while ((wid = m_stackedWidget->currentWidget()))
@@ -86,6 +89,35 @@ void AppLauncher::init()
 }
 
 
+void AppLauncher::quit(const QString configPath)
+{
+    qCDebug(LOG_PL) << "Configuration path" << configPath;
+
+    QSettings settings(configPath, QSettings::IniFormat);
+    settings.setIniCodec("UTF-8");
+
+    settings.beginGroup(QString("UI"));
+    settings.setValue(QString("BarPosition"), toolBarArea(m_toolBar));
+    settings.endGroup();
+
+    settings.sync();
+}
+
+
+void AppLauncher::readSettings(const QString configPath)
+{
+    qCDebug(LOG_PL) << "Configuration path" << configPath;
+
+    QSettings settings(configPath, QSettings::IniFormat);
+    settings.setIniCodec("UTF-8");
+
+    settings.beginGroup(QString("UI"));
+    m_toolBarArea = static_cast<Qt::ToolBarArea>(settings.value(
+        QString("BarPosition"), Qt::TopToolBarArea).toInt());
+    settings.endGroup();
+}
+
+
 void AppLauncher::setArgs(QuadroCore *core, const QVariantHash settings)
 {
     qCDebug(LOG_PL) << "Application settings" << settings;
@@ -95,7 +127,6 @@ void AppLauncher::setArgs(QuadroCore *core, const QVariantHash settings)
 
     // create ui
     m_toolBar = new QToolBar(this);
-    addToolBar(m_toolBar);
 
     // ui
     QWidget *widget = new QWidget(this);

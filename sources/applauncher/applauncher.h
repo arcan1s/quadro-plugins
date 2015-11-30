@@ -43,9 +43,9 @@ public:
     QString name() const;
     QWidget *widget();
     void init();
-    void quit() {};
-    void readSettings(const QString desktopPath) {};
-    bool saveSettings(const QString desktopPath) { return true; };
+    void quit(const QString configPath);
+    void readSettings(const QString configPath);
+    bool saveSettings(const QString configPath) { return true; };
     void setArgs(QuadroCore *core, const QVariantHash settings);
 
 public slots:
@@ -70,6 +70,7 @@ private:
     QLineEdit *m_searchBar = nullptr;
     QStackedWidget *m_stackedWidget = nullptr;
     QToolBar *m_toolBar = nullptr;
+    Qt::ToolBarArea m_toolBarArea = Qt::TopToolBarArea;
     // backend
     QVariantHash m_appConfiguration;
     QuadroCore *m_core = nullptr;

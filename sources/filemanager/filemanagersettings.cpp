@@ -66,6 +66,11 @@ QVariantHash FileManagerSettings::readSettings(const QString configPath)
     configuration[QString("Tabs")] = settings.value(QString("Tabs"),
                                                     QStringList() << QDir::homePath());
 
+    settings.beginGroup(QString("UI"));
+    configuration[QString("BarPosition")] = settings.value(
+        QString("BarPosition"), Qt::TopToolBarArea);
+    settings.endGroup();
+
     init(configuration);
     return configuration;
 }

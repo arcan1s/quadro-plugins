@@ -22,6 +22,7 @@
 #include <QApplication>
 #include <QKeyEvent>
 #include <QLineEdit>
+#include <QSettings>
 #include <QStackedWidget>
 #include <QToolBar>
 #include <QVBoxLayout>
@@ -73,6 +74,9 @@ QWidget *FileManager::widget()
 
 void FileManager::init()
 {
+    addToolBar(static_cast<Qt::ToolBarArea>(
+                   m_configuration[QString("BarPosition")].toInt()), m_toolBar);
+
     // search widget
     m_pageWidgets.append(new QuadroWidget(this, itemSize().width()));
     m_pageButtons.append(m_toolBar->addAction("search"));
@@ -80,6 +84,21 @@ void FileManager::init()
     m_stackedWidget->addWidget(m_pageWidgets.last());
 
     return createPage(m_configuration.value(QString("path"), QDir::homePath()).toString());
+}
+
+
+void FileManager::quit(const QString configPath)
+{
+    qCDebug(LOG_PL) << "Configuration path" << configPath;
+
+    QSettings settings(configPath, QSettings::IniFormat);
+    settings.setIniCodec("UTF-8");
+
+    settings.beginGroup(QString("UI"));
+    settings.setValue(QString("BarPosition"), toolBarArea(m_toolBar));
+    settings.endGroup();
+
+    settings.sync();
 }
 
 
@@ -109,7 +128,6 @@ void FileManager::setArgs(QuadroCore *core, const QVariantHash settings)
 
     // create ui
     m_toolBar = new QToolBar(this);
-    addToolBar(m_toolBar);
 
     // ui
     QWidget *widget = new QWidget(this);

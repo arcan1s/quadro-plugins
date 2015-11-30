@@ -48,7 +48,7 @@ public:
     QString name() const;
     QWidget *widget();
     void init();
-    void quit() {};
+    void quit(const QString configPath);
     void readSettings(const QString configPath);
     bool saveSettings(const QString configPath);
     void setArgs(QuadroCore *core, const QVariantHash settings);
