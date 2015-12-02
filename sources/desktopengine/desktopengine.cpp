@@ -14,144 +14,110 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with quadro. If not, see http://www.gnu.org/licenses/           *
  ***************************************************************************/
-/**
- * @file desktopplugin.cpp
- * Source code of quadro library
- * @author Evgeniy Alekseev
- * @copyright GPLv3
- * @bug https://github.com/arcan1s/quadro-core/issues
- */
 
 
-#include <QDebug>
+#include "desktopengine.h"
+
 #include <QProcess>
-#include <QSettings>
+#include <QTextCodec>
 
-#include <quadro/quadro.h>
-#include <pdebug/pdebug.h>
-#include <task/taskadds.h>
-
-#include "version.h"
+#include "desktopenginesettings.h"
 
 
-/**
- * @class DesktopPlugin
- */
-/**
- * @fn DesktopPlugin
- */
-DesktopPlugin::DesktopPlugin(QObject *parent, const bool debugCmd)
-    : PluginItem(parent, debugCmd),
-      debug(debugCmd)
+DesktopEngine::~DesktopEngine()
 {
+    qCDebug(LOG_PL) << __PRETTY_FUNCTION__;
+
+    delete m_config;
+    if (m_process != nullptr) {
+        m_process->kill();
+        m_process->deleteLater();
+    }
 }
 
 
-/**
- * @fn ~DesktopPlugin
- */
-DesktopPlugin::~DesktopPlugin()
+QString DesktopEngine::background() const
 {
-    if (debug) qDebug() << PDEBUG;
+    return m_configuration[QString("Background")].toString();
 }
 
 
-/**
- * @fn action
- */
-QString DesktopPlugin::action()
+QWidget *DesktopEngine::configWidget()
 {
-    if (debug) qDebug() << PDEBUG;
-
-    return m_action;
+    return m_config;
 }
 
 
-/**
- * @fn cmd
- */
-QString DesktopPlugin::cmd()
+QString DesktopEngine::data() const
 {
-    if (debug) qDebug() << PDEBUG;
-
-    return m_cmd;
+    return m_data;
 }
 
 
-/**
- * @fn setAction
- */
-void DesktopPlugin::setAction(const QString _actionCmd)
+QString DesktopEngine::name() const
 {
-    if (debug) qDebug() << PDEBUG;
-    if (debug) qDebug() << PDEBUG << ":" << "Action" << _actionCmd;
+    return tr("Desktop engine");
+}
 
-    m_action = _actionCmd;
+void DesktopEngine::action() const
+{
+    QProcess::startDetached(m_configuration[QString("Action")].toString());
 }
 
 
-/**
- * @fn setCmd
- */
-void DesktopPlugin::setCmd(const QString _cmd)
+void DesktopEngine::init()
 {
-    if (debug) qDebug() << PDEBUG;
-    if (debug) qDebug() << PDEBUG << ":" << "Command" << _cmd;
+    m_config = new DesktopEngineSettings(nullptr);
 
-    m_cmd = _cmd;
+    m_process = new QProcess(nullptr);
+    connect(m_process, SIGNAL(finished(int, QProcess::ExitStatus)), this,
+            SLOT(updateData(int, QProcess::ExitStatus)));
+    m_process->waitForFinished(0);
 }
 
 
-/**
- * @fn actionRequired
- */
-void DesktopPlugin::actionRequired()
+QSize DesktopEngine::minimalSize() const
 {
-    if (debug) qDebug() << PDEBUG;
-    if (action().isEmpty()) return;
-
-    if (debug) qDebug() << PDEBUG << ":" << "Calling" << action();
-    QProcess::startDetached(action());
+    return QSize(m_configuration[QString("Width")].toInt(),
+                 m_configuration[QString("Height")].toInt());
 }
 
 
-/**
- * @fn readDesktop
- */
-void DesktopPlugin::readDesktop(const QString _desktopPath)
+void DesktopEngine::readSettings(const QString configPath)
 {
-    if (debug) qDebug() << PDEBUG;
+    qCDebug(LOG_PL) << "Configuration path" << configPath;
 
-    // basic settings
-    PluginItem::readDesktop(_desktopPath);
-
-    // custom settings
-    QSettings settings(_desktopPath, QSettings::IniFormat);
-
-    settings.beginGroup(QString("[Desktop plugin]"));
-    setAction(settings.value(QString("Action"), m_action).toString());
-    setCmd(settings.value(QString("Cmd"), m_cmd).toString());
-    settings.endGroup();
+    m_configuration = m_config->readSettings(configPath);
 }
 
 
-QString DesktopPlugin::getBackground()
+bool DesktopEngine::saveSettings(const QString configPath)
 {
-    if (debug) qDebug() << PDEBUG;
+    qCDebug(LOG_PL) << "Configuration path" << configPath;
 
-    return background();
+    return m_config->saveSettings(configPath, m_configuration);
 }
 
 
-QString DesktopPlugin::getData()
+void DesktopEngine::update()
 {
-    if (debug) qDebug() << PDEBUG;
+    if (m_process->state() != QProcess::NotRunning)
+        return;
 
-    if (debug) qDebug() << PDEBUG << ":" << "Run cmd" << cmd();
-    TaskResult process = runTask(cmd());
-    if (debug) qDebug() << PDEBUG << ":" << "Cmd returns" << process.exitCode;
-    if (process.exitCode != 0)
-        if (debug) qDebug() << PDEBUG << ":" << "Error" << process.error;
+    m_process->start(m_configuration[QString("Executable")].toString());
+}
 
-    return process.output;
+
+int DesktopEngine::updateInterval() const
+{
+    return m_configuration[QString("Interval")].toInt();
+}
+
+
+void DesktopEngine::updateData(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    qCDebug(LOG_PL) << "Exit code" << exitCode << "with status" << exitStatus;
+
+    m_data = QTextCodec::codecForMib(106)->toUnicode(
+        m_process->readAllStandardError()).trimmed();
 }

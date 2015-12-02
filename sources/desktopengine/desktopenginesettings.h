@@ -15,46 +15,30 @@
  *   along with quadro. If not, see http://www.gnu.org/licenses/           *
  ***************************************************************************/
 
+#ifndef DESKTOPENGINESETTINGS_H
+#define DESKTOPENGINESETTINGS_H
 
-#ifndef DESKTOPENGINE_H
-#define DESKTOPENGINE_H
-
-#include <quadrocore/quadro.h>
+#include <QWidget>
 
 
+namespace Ui {
 class DesktopEngineSettings;
-class QProcess;
+}
 
-class DesktopEngine : public QObject, PluginInterface
+class DesktopEngineSettings : public QWidget
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "core.quadro.desktopengine/1.0")
-    Q_INTERFACES(PluginInterface)
 
 public:
-    ~DesktopEngine();
-    QString background() const;
-    QWidget *configWidget();
-    QString data() const;
-    QString name() const;
-    void action() const;
-    void init();
-    QSize minimalSize() const;
-    void quit(const QString) {};
-    void readSettings(const QString configPath);
-    bool saveSettings(const QString configPath);
-    void update();
-    int updateInterval() const;
-
-private slots:
-    void updateData(int exitCode, QProcess::ExitStatus exitStatus);
+    explicit DesktopEngineSettings(QWidget *parent = nullptr);
+    virtual ~DesktopEngineSettings();
+    QVariantHash readSettings(const QString desktopPath);
+    bool saveSettings(const QString desktopPath, const QVariantHash configuration) const;
 
 private:
-    QVariantHash m_configuration;
-    QString m_data;
-    DesktopEngineSettings *m_config = nullptr;
-    QProcess *m_process = nullptr;
+    Ui::DesktopEngineSettings *ui;
+    void init(const QVariantHash configuration);
 };
 
 
-#endif /* DESKTOPENGINE_H */
+#endif /* DESKTOPENGINESETTINGS_H */
