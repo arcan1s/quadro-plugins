@@ -57,7 +57,19 @@ QVariantHash HelloWorldSettings::readSettings(const QString configPath)
 }
 
 
-bool HelloWorldSettings::saveSettings(const QString configPath,
+QVariantHash HelloWorldSettings::saveSettings() const
+{
+    QVariantHash configuration;
+    configuration[QString("Background")] = ui->lineEdit_background->text();
+    configuration[QString("Text")] = ui->lineEdit_text->text();
+
+    for (auto key : configuration.keys())
+        qCInfo(LOG_PL) << key << "=" << configuration[key];
+    return configuration;
+}
+
+
+bool HelloWorldSettings::writeSettings(const QString configPath,
                                        const QVariantHash configuration) const
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;

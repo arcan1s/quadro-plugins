@@ -60,8 +60,23 @@ QVariantHash PCStatusSettings::readSettings(const QString configPath)
 }
 
 
-bool PCStatusSettings::saveSettings(const QString configPath,
-                                    const QVariantHash configuration) const
+QVariantHash PCStatusSettings::saveSettings() const
+{
+    QVariantHash configuration;
+    configuration[QString("ShowCPU")] = ui->checkBox_cpu->isChecked();
+    configuration[QString("ShowMem")] = ui->checkBox_memory->isChecked();
+    configuration[QString("ShowNet")] = ui->checkBox_swap->isChecked();
+    configuration[QString("ShowSwap")] = ui->checkBox_network->isChecked();
+    configuration[QString("Update")] = ui->spinBox_update->value();
+
+    for (auto key : configuration.keys())
+        qCInfo(LOG_PL) << key << "=" << configuration[key];
+    return configuration;
+}
+
+
+bool PCStatusSettings::writeSettings(const QString configPath,
+                                     const QVariantHash configuration) const
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
     qCDebug(LOG_PL) << "Settings to save" << configuration;

@@ -41,7 +41,9 @@ public:
     QSize minimalSize() const;
     void quit(const QString) {};
     void readSettings(const QString configPath);
-    bool saveSettings(const QString configPath);
+    void saveSettings();
+    bool writeSettings(const QString configPath) const;
+    void setArgs(QuadroCore *, const QVariantHash) {};
     void update() {};
     int updateInterval() const;
 

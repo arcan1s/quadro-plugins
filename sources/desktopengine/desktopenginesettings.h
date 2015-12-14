@@ -33,7 +33,8 @@ public:
     explicit DesktopEngineSettings(QWidget *parent = nullptr);
     virtual ~DesktopEngineSettings();
     QVariantHash readSettings(const QString desktopPath);
-    bool saveSettings(const QString desktopPath, const QVariantHash configuration) const;
+    QVariantHash saveSettings() const;
+    bool writeSettings(const QString desktopPath, const QVariantHash configuration) const;
 
 private:
     Ui::DesktopEngineSettings *ui;

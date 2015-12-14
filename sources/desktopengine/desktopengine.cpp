@@ -91,11 +91,17 @@ void DesktopEngine::readSettings(const QString configPath)
 }
 
 
-bool DesktopEngine::saveSettings(const QString configPath)
+void DesktopEngine::saveSettings()
+{
+    m_configuration = m_config->saveSettings();
+}
+
+
+bool DesktopEngine::writeSettings(const QString configPath) const
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
-    return m_config->saveSettings(configPath, m_configuration);
+    return m_config->writeSettings(configPath, m_configuration);
 }
 
 

@@ -30,10 +30,10 @@
 
 class QAction;
 class FileManagerSettings;
-class QLineEdit;
 class QStackedWidget;
 class QToolBar;
 class QuadroWidget;
+class SearchBar;
 
 class FileManager : public QMainWindow, TabPluginInterface
 {
@@ -50,7 +50,8 @@ public:
     void init();
     void quit(const QString configPath);
     void readSettings(const QString configPath);
-    bool saveSettings(const QString configPath);
+    void saveSettings();
+    bool writeSettings(const QString configPath) const;
     void setArgs(QuadroCore *core, const QVariantHash settings);
 
 public slots:
@@ -73,7 +74,7 @@ private:
     QList<QuadroWidget *> m_pageWidgets;
     FileManagerSettings *m_config = nullptr;
     // core ui
-    QLineEdit *m_searchBar = nullptr;
+    SearchBar *m_searchBar = nullptr;
     QStackedWidget *m_stackedWidget = nullptr;
     QToolBar *m_toolBar = nullptr;
     // backend

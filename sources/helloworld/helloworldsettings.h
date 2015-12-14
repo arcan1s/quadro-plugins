@@ -33,7 +33,8 @@ public:
     explicit HelloWorldSettings(QWidget *parent = nullptr);
     virtual ~HelloWorldSettings();
     QVariantHash readSettings(const QString desktopPath);
-    bool saveSettings(const QString desktopPath, const QVariantHash configuration) const;
+    QVariantHash saveSettings() const;
+    bool writeSettings(const QString desktopPath, const QVariantHash configuration) const;
 
 private:
     Ui::HelloWorldSettings *ui;

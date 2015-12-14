@@ -61,8 +61,24 @@ QVariantHash DesktopEngineSettings::readSettings(const QString configPath)
 }
 
 
-bool DesktopEngineSettings::saveSettings(const QString configPath,
-                                         const QVariantHash configuration) const
+QVariantHash DesktopEngineSettings::saveSettings() const
+{
+    QVariantHash configuration;
+    configuration[QString("Action")] = ui->lineEdit_action->text();
+    configuration[QString("Background")] = ui->lineEdit_background->text();
+    configuration[QString("Executable")] = ui->lineEdit_executable->text();
+    configuration[QString("Interval")] = ui->spinBox_interval->value();
+    configuration[QString("Height")] = ui->spinBox_height->value();
+    configuration[QString("Width")] = ui->spinBox_width->value();
+
+    for (auto key : configuration.keys())
+        qCInfo(LOG_PL) << key << "=" << configuration[key];
+    return configuration;
+}
+
+
+bool DesktopEngineSettings::writeSettings(const QString configPath,
+                                          const QVariantHash configuration) const
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
     qCDebug(LOG_PL) << "Settings to save" << configuration;

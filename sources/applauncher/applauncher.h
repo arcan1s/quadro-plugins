@@ -25,10 +25,10 @@
 
 
 class QAction;
-class QLineEdit;
 class QStackedWidget;
 class QToolBar;
 class QuadroWidget;
+class SearchBar;
 
 class AppLauncher : public QMainWindow, TabPluginInterface
 {
@@ -45,7 +45,8 @@ public:
     void init();
     void quit(const QString configPath);
     void readSettings(const QString configPath);
-    bool saveSettings(const QString configPath) { return true; };
+    void saveSettings() { };
+    bool writeSettings(const QString) const { return true; };
     void setArgs(QuadroCore *core, const QVariantHash settings);
 
 public slots:
@@ -67,7 +68,7 @@ private:
     QList<QAction *> m_categoryButtons;
     QList<QuadroWidget *> m_categoryWidgets;
     // core ui
-    QLineEdit *m_searchBar = nullptr;
+    SearchBar *m_searchBar = nullptr;
     QStackedWidget *m_stackedWidget = nullptr;
     QToolBar *m_toolBar = nullptr;
     Qt::ToolBarArea m_toolBarArea = Qt::TopToolBarArea;

@@ -33,7 +33,8 @@ public:
     explicit FileManagerSettings(QWidget *parent = nullptr);
     virtual ~FileManagerSettings();
     QVariantHash readSettings(const QString configPath);
-    bool saveSettings(const QString configPath, const QVariantHash configuration) const;
+    QVariantHash saveSettings() const;
+    bool writeSettings(const QString configPath, const QVariantHash configuration) const;
 
 protected:
     void keyPressEvent(QKeyEvent *pressedKey);

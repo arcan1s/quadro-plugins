@@ -20,6 +20,7 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QDir>
 #include <QKeyEvent>
 #include <QLineEdit>
 #include <QSettings>
@@ -49,8 +50,8 @@ FileManager::~FileManager()
 
 QSize FileManager::itemSize()
 {
-    return QSize(m_appConfiguration[QString("GridSize")].toFloat(),
-                 m_appConfiguration[QString("GridSize")].toFloat());
+    return QSize(m_appConfiguration[QString("GridSize")].toInt(),
+                 m_appConfiguration[QString("GridSize")].toInt());
 }
 
 
@@ -110,11 +111,19 @@ void FileManager::readSettings(const QString configPath)
 }
 
 
-bool FileManager::saveSettings(const QString configPath)
+void FileManager::saveSettings()
+{
+    QVariantHash config = m_config->saveSettings();
+    for (auto key : config.keys())
+        m_configuration[key] = config[key];
+}
+
+
+bool FileManager::writeSettings(const QString configPath) const
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
-    return m_config->saveSettings(configPath, m_configuration);
+    return m_config->writeSettings(configPath, m_configuration);
 }
 
 
@@ -131,8 +140,8 @@ void FileManager::setArgs(QuadroCore *core, const QVariantHash settings)
 
     // ui
     QWidget *widget = new QWidget(this);
-    m_searchBar = new QLineEdit(widget);
-    m_searchBar->setPlaceholderText(tr("Type filename here"));
+    m_searchBar = new SearchBar(widget);
+    m_searchBar->setPlaceholderText(tr("Type for search"));
     m_stackedWidget = new QStackedWidget(widget);
     // layout
     QVBoxLayout *layout = new QVBoxLayout(widget);
@@ -215,7 +224,7 @@ bool FileManager::eventFilter(QObject *object, QEvent *event)
             && (!m_searchBar->hasFocus())) {
             loadPage(QString("%1/..").arg(static_cast<QuadroWidget *>(m_stackedWidget->currentWidget())->title()));
         } else {
-            m_searchBar->setFocus();
+            m_searchBar->keyPressed(static_cast<QKeyEvent *>(event));
         }
     }
 

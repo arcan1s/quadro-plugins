@@ -76,8 +76,27 @@ QVariantHash FileManagerSettings::readSettings(const QString configPath)
 }
 
 
-bool FileManagerSettings::saveSettings(const QString configPath,
-                                       const QVariantHash configuration) const
+QVariantHash FileManagerSettings::saveSettings() const
+{
+    QVariantHash configuration;
+    configuration[QString("SearchResult")] = ui->spinBox_searchCount->value();
+    configuration[QString("ShowHidden")] = ui->checkBox_hidden->isChecked();
+    configuration[QString("ShowToolbar")] = ui->checkBox_toolbar->isChecked();
+    QList<QListWidgetItem *> items = ui->listWidget_tabs->findItems(
+        QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
+    QStringList tabs;
+    for (auto item : items)
+        tabs.append(item->text());
+    configuration[QString("Tabs")] = tabs;
+
+    for (auto key : configuration.keys())
+        qCInfo(LOG_PL) << key << "=" << configuration[key];
+    return configuration;
+}
+
+
+bool FileManagerSettings::writeSettings(const QString configPath,
+                                        const QVariantHash configuration) const
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
     qCDebug(LOG_PL) << "Settings to save" << configuration;

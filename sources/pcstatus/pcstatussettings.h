@@ -33,7 +33,8 @@ public:
     explicit PCStatusSettings(QWidget *parent = nullptr);
     virtual ~PCStatusSettings();
     QVariantHash readSettings(const QString configPath);
-    bool saveSettings(const QString configPath, const QVariantHash configuration) const;
+    QVariantHash saveSettings() const;
+    bool writeSettings(const QString configPath, const QVariantHash configuration) const;
 
 private:
     Ui::PCStatusSettings *ui;

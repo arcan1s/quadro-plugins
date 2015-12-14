@@ -130,8 +130,8 @@ void AppLauncher::setArgs(QuadroCore *core, const QVariantHash settings)
 
     // ui
     QWidget *widget = new QWidget(this);
-    m_searchBar = new QLineEdit(widget);
-    m_searchBar->setPlaceholderText(tr("Type application name here"));
+    m_searchBar = new SearchBar(widget);
+    m_searchBar->setPlaceholderText(tr("Type for search"));
     m_stackedWidget = new QStackedWidget(widget);
     // layout
     QVBoxLayout *layout = new QVBoxLayout(widget);
@@ -163,7 +163,7 @@ bool AppLauncher::eventFilter(QObject *object, QEvent *event)
     // move event if key pressed
     if ((event->type() == QEvent::KeyPress)
         && (static_cast<QKeyEvent *>(event)->key() != Qt::Key_Return)) {
-        m_searchBar->setFocus();
+        m_searchBar->keyPressed(static_cast<QKeyEvent *>(event));
     }
 
     return QObject::eventFilter(object, event);
@@ -230,7 +230,8 @@ void AppLauncher::showSearchResults(const QString search)
     m_categoryWidgets.last()->clearLayout();
 
     // return if none to do here
-    if (search.isEmpty()) return m_stackedWidget->setCurrentIndex(0);
+    if (search.isEmpty())
+        return m_stackedWidget->setCurrentIndex(0);
     // add items
     QMap<QString, ApplicationItem *> apps = m_core->recently()->applicationsBySubstr(search);
     QMap<QString, ApplicationItem *> launcherApps = m_core->launcher()->applicationsBySubstr(search);
