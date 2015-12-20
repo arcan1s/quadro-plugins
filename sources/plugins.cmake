@@ -1,6 +1,7 @@
 # tab plugins
 quadro_install_plugin("applauncher")
 quadro_install_plugin("filemanager")
+quadro_install_plugin("webpage" "webpage" ${Qt5Network_LIBRARIES})
 # plugins
 quadro_install_plugin("datetime")
 quadro_install_plugin("desktopengine")

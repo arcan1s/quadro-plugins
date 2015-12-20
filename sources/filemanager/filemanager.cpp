@@ -133,7 +133,7 @@ void FileManager::setArgs(QuadroCore *core, const QVariantHash settings)
 
     m_appConfiguration = settings;
     m_core = core;
-    m_config = new FileManagerSettings(this);
+    m_config = new FileManagerSettings();
 
     // create ui
     m_toolBar = new QToolBar(this);
