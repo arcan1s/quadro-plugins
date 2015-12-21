@@ -56,7 +56,8 @@ QWidget *WebPage::widget()
 
 void WebPage::init()
 {
-    m_widget->setCache(m_configuration[QString("Cache")].toString());
+    if (m_configuration[QString("UseCache")].toBool())
+        m_widget->setCache(m_configuration[QString("Cache")].toString());
     m_widget->loadUrl(QUrl::fromUserInput(m_configuration[QString("Url")].toString()));
 }
 

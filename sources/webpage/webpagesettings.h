@@ -38,6 +38,7 @@ public:
 
 private:
     Ui::WebPageSettings *ui;
+    QString generateCacheId(const QString title) const;
     void init(const QVariantHash configuration);
 };
 

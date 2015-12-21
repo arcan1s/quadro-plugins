@@ -51,9 +51,12 @@ QVariantHash WebPageSettings::readSettings(const QString configPath)
 
     QVariantHash configuration;
     // general settings
-    configuration[QString("Cache")] = settings.value(QString("Cache"), QUuid::createUuid().toString());
     configuration[QString("Title")] = settings.value(QString("Title"), QString("None"));
     configuration[QString("Url")] = settings.value(QString("Url"), QString("about:blank"));
+    configuration[QString("UseCache")] = settings.value(QString("UseCache"), true);
+
+    configuration[QString("Cache")] = settings.value(
+        QString("Cache"), generateCacheId(configuration[QString("Title")].toString()));
 
     init(configuration);
     return configuration;
@@ -65,6 +68,7 @@ QVariantHash WebPageSettings::saveSettings() const
     QVariantHash configuration;
     configuration[QString("Title")] = ui->lineEdit_title->text();
     configuration[QString("Url")] = ui->lineEdit_url->text();
+    configuration[QString("UseCache")] = ui->checkBox_cache->isChecked();
 
     for (auto key : configuration.keys())
         qCInfo(LOG_PL) << key << "=" << configuration[key];
@@ -85,10 +89,22 @@ bool WebPageSettings::writeSettings(const QString configPath,
     settings.setValue(QString("Cache"), configuration[QString("Cache")]);
     settings.setValue(QString("Title"), configuration[QString("Title")]);
     settings.setValue(QString("Url"), configuration[QString("Url")]);
+    settings.setValue(QString("UseCache"), configuration[QString("UseCache")]);
 
     settings.sync();
 
     return settings.status() == QSettings::NoError;
+}
+
+
+QString WebPageSettings::generateCacheId(const QString title) const
+{
+    qCDebug(LOG_PL) << "Generate cache ID using title" << title;
+
+    QString id = QString("quadro-%1-%2").arg(title).arg(QUuid::createUuid().toString());
+    qCInfo(LOG_PL) << "Generated cache ID" << id;
+
+    return id;
 }
 
 
@@ -98,4 +114,5 @@ void WebPageSettings::init(const QVariantHash configuration)
 
     ui->lineEdit_title->setText(configuration[QString("Title")].toString());
     ui->lineEdit_url->setText(configuration[QString("Url")].toString());
+    ui->checkBox_cache->setChecked(configuration[QString("UseCache")].toBool());
 }
