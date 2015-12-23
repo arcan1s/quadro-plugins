@@ -16,72 +16,27 @@
  ***************************************************************************/
 
 
-#include "newspluginhelper.h"
-
-#include <QTimer>
+#include "yandexnewspluginprovider.h"
 
 #include <quadrocore/quadrodebug.h>
 
-#include "theguardiannewspluginprovider.h"
-#include "yandexnewspluginprovider.h"
 
-
-NewsPluginHelper::NewsPluginHelper(QObject *parent, const int provider,
-                                   const int interval)
-    : QObject(parent)
+YandexNewsPluginProvider::YandexNewsPluginProvider(QObject *parent)
+    : NewsPluginProvider(parent)
 {
     qCDebug(LOG_PL) << __PRETTY_FUNCTION__;
-
-    switch(provider) {
-    case 0:
-        m_provider = new TheGuardianNewsPluginProvider(this);
-    case 2:
-        m_provider = new YandexNewsPluginProvider(this);
-        break;
-    default:
-        qCCritical(LOG_PL) << "Unknown provider" << provider;
-        break;
-    }
-
-    m_timer = new QTimer(this);
-    m_timer->setInterval(1000 * interval);
-    m_timer->setSingleShot(false);
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
 }
 
 
-NewsPluginHelper::~NewsPluginHelper()
+YandexNewsPluginProvider::~YandexNewsPluginProvider()
 {
     qCDebug(LOG_PL) << __PRETTY_FUNCTION__;
-
-    disconnect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
-
-    delete m_provider;
-    delete m_timer;
 }
 
 
-int NewsPluginHelper::bump()
+QList<NewsPluginMetadata> YandexNewsPluginProvider::retrieve()
 {
-    if (m_metadata.isEmpty())
-        return -1;
+    QList<NewsPluginMetadata> metadata;
 
-    if (m_current == m_metadata.count() - 1)
-        m_current = 0;
-    else
-        m_current++;
-
-    return m_current;
-}
-
-
-NewsPluginMetadata NewsPluginHelper::news() const
-{
-    return m_current == -1 ? NewsPluginMetadata() : m_metadata[m_current];
-}
-
-
-void NewsPluginHelper::update()
-{
-    m_metadata = m_provider->retrieve();
+    return metadata;
 }
