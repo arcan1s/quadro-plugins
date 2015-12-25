@@ -18,15 +18,17 @@
 
 #include "yandexnewspluginprovider.h"
 
+#include <QXmlStreamReader>
+
 #include <quadrocore/quadrodebug.h>
 
 
-YandexNewsPluginProvider::YandexNewsPluginProvider(QObject *parent)
-    : NewsPluginProvider(parent)
+YandexNewsPluginProvider::YandexNewsPluginProvider(QObject *parent, const QString type)
+    : NewsPluginProvider(parent, type)
+    , m_type(type)
 {
     qCDebug(LOG_PL) << __PRETTY_FUNCTION__;
 }
-
 
 YandexNewsPluginProvider::~YandexNewsPluginProvider()
 {
@@ -34,9 +36,57 @@ YandexNewsPluginProvider::~YandexNewsPluginProvider()
 }
 
 
-QList<NewsPluginMetadata> YandexNewsPluginProvider::retrieve()
+QList<NewsPluginMetadata> YandexNewsPluginProvider::data() const
 {
-    QList<NewsPluginMetadata> metadata;
+    return m_metadata;
+}
 
-    return metadata;
+
+QString YandexNewsPluginProvider::url() const
+{
+    return QString("%1%2.rss").arg(YANDEX_API_URL).arg(m_type);
+}
+
+
+void YandexNewsPluginProvider::replyReceived(QNetworkReply *reply)
+{
+    qCDebug(LOG_PL) << "Return code" << reply->error();
+    qCDebug(LOG_PL) << "Reply error message" << reply->errorString();
+
+    QXmlStreamReader xml;
+    xml.addData(reply->readAll());
+    if ((reply->error() != QNetworkReply::NoError)
+        || (xml.error())) {
+        qCWarning(LOG_LIB) << "Parse error" << xml.errorString();
+        return;
+    }
+
+    m_metadata.clear();
+    QString currentTag;
+    QString title;
+    QString url;
+    while (!xml.atEnd()) {
+        xml.readNext();
+        if (xml.isStartElement()) {
+            if (xml.name() == QString("item")) {
+                title.clear();
+                url.clear();
+            }
+            currentTag = xml.name().toString();
+        } else if (xml.isEndElement()) {
+            if (xml.name() == QString("item")) {
+                NewsPluginMetadata singleData;
+                singleData.image = QString();
+                singleData.text = title;
+                singleData.url = url;
+                m_metadata.append(singleData);
+            }
+        } else if ((xml.isCharacters())
+                   && (!xml.isWhitespace())) {
+            if (currentTag == QString("title"))
+                title += xml.text().toString();
+            else if (currentTag == QString("link"))
+                url += xml.text().toString();
+        }
+    }
 }

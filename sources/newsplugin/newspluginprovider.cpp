@@ -16,33 +16,37 @@
  ***************************************************************************/
 
 
-#ifndef YANDEXNEWSPLUGINPROVIDER_H
-#define YANDEXNEWSPLUGINPROVIDER_H
-
 #include "newspluginprovider.h"
 
-#ifndef YANDEX_API_URL
-#define YANDEX_API_URL "https://news.yandex.ru/"
-#endif /* YANDEX_API_URL */
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+
+#include <quadrocore/quadrodebug.h>
 
 
-class YandexNewsPluginProvider : public NewsPluginProvider
+NewsPluginProvider::NewsPluginProvider(QObject *parent, const QString type)
+    : QObject(parent)
 {
-    Q_OBJECT
+    qCDebug(LOG_PL) << __PRETTY_FUNCTION__;
 
-public:
-    explicit YandexNewsPluginProvider(QObject *parent, const QString type);
-    virtual ~YandexNewsPluginProvider();
-    QList<NewsPluginMetadata> data() const;
-    QString url() const;
-
-public slots:
-    void replyReceived(QNetworkReply *reply);
-
-private:
-    QList<NewsPluginMetadata> m_metadata;
-    QString m_type;
-};
+    m_manager = new QNetworkAccessManager(this);
+    connect(m_manager, SIGNAL(finished(QNetworkReply *)), this,
+            SLOT(replyReceived(QNetworkReply *)));
+}
 
 
-#endif /* YANDEXNEWSPLUGINPROVIDER_H */
+NewsPluginProvider::~NewsPluginProvider()
+{
+    qCDebug(LOG_PL) << __PRETTY_FUNCTION__;
+
+    disconnect(m_manager, SIGNAL(finished(QNetworkReply *)), this,
+               SLOT(replyReceived(QNetworkReply *)));
+
+    m_manager->deleteLater();
+}
+
+
+void NewsPluginProvider::retrieve()
+{
+    m_manager->get(QNetworkRequest(QUrl(url())));
+}

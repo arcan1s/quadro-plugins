@@ -20,7 +20,10 @@
 #define NEWSPLUGINPROVIDER_H
 
 #include <QObject>
+#include <QNetworkReply>
 
+
+class QNetworkAccessManager;
 
 typedef struct {
     QString image;
@@ -33,10 +36,17 @@ class NewsPluginProvider : public QObject
     Q_OBJECT
 
 public:
-    explicit NewsPluginProvider(QObject *parent) : QObject(parent) {};
-    virtual ~NewsPluginProvider() {};
-    virtual QList<NewsPluginMetadata> retrieve() = 0;
+    explicit NewsPluginProvider(QObject *parent, const QString type);
+    virtual ~NewsPluginProvider();
+    virtual QList<NewsPluginMetadata> data() const = 0;
+    virtual void retrieve();
+    virtual QString url() const = 0;
 
+public slots:
+    virtual void replyReceived(QNetworkReply *reply) = 0;
+
+private:
+    QNetworkAccessManager *m_manager;
 };
 
 

@@ -63,6 +63,7 @@ QVariantHash NewsPluginSettings::saveSettings() const
     QVariantHash configuration;
     configuration[QString("Provider")] = ui->comboBox_provider->currentIndex();
     configuration[QString("Retrieve")] = ui->spinBox_retrieve->value();
+    configuration[QString("Type")] = ui->lineEdit_type->text();
     configuration[QString("Update")] = ui->spinBox_update->value();
 
     for (auto key : configuration.keys())
@@ -82,6 +83,7 @@ bool NewsPluginSettings::writeSettings(const QString configPath,
 
     settings.setValue(QString("Provider"), configuration[QString("Provider")]);
     settings.setValue(QString("Retrieve"), configuration[QString("Retrieve")]);
+    settings.setValue(QString("Type"), configuration[QString("Type")]);
     settings.setValue(QString("Update"), configuration[QString("Update")]);
 
     settings.sync();
@@ -96,5 +98,6 @@ void NewsPluginSettings::init(const QVariantHash configuration)
 
     ui->comboBox_provider->setCurrentIndex(configuration[QString("Provider")].toInt());
     ui->spinBox_retrieve->setValue(configuration[QString("Retrieve")].toInt());
+    ui->lineEdit_type->setText(configuration[QString("Type")].toString());
     ui->spinBox_update->setValue(configuration[QString("Update")].toInt());
 }

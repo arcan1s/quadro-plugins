@@ -6,9 +6,6 @@ add_definitions(
 set(Qt_INCLUDE
         ${Qt5Network_INCLUDE_DIRS}
 )
-set(Qt_LIBRARIES
-        ${Qt5Network_LIBRARIES}
-)
 
 # quadro library
 find_package(Quadro)

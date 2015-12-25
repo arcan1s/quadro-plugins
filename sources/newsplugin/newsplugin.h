@@ -50,8 +50,8 @@ public:
 
 private:
     QVariantHash m_configuration;
-    NewsPluginHelper *m_helper = nullptr;
     NewsPluginSettings *m_config = nullptr;
+    NewsPluginHelper *m_helper = nullptr;
 };
 
 

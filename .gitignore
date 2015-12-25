@@ -46,3 +46,7 @@ build
 
 # clion settings
 .idea
+
+# api keys
+sources/newsplugin/theguardianapikey.h
+sources/openweather/openweatherapikey.h

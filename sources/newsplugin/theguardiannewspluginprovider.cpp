@@ -17,43 +17,36 @@
 
 
 #include "theguardiannewspluginprovider.h"
-#include "newspluginprovider.h"
 
 #include <QJsonDocument>
 #include <QJsonParseError>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
 
 #include <quadrocore/quadrodebug.h>
 
 
-TheGuardianNewsPluginProvider::TheGuardianNewsPluginProvider(QObject *parent)
-    : NewsPluginProvider(parent)
+TheGuardianNewsPluginProvider::TheGuardianNewsPluginProvider(QObject *parent, const QString type)
+    : NewsPluginProvider(parent, type)
+    , m_apiKey(type)
 {
     qCDebug(LOG_PL) << __PRETTY_FUNCTION__;
-
-    m_manager = new QNetworkAccessManager(this);
-    connect(m_manager, SIGNAL(finished(QNetworkReply *)), this,
-            SLOT(replyReceived(QNetworkReply *)));
 }
 
 
 TheGuardianNewsPluginProvider::~TheGuardianNewsPluginProvider()
 {
     qCDebug(LOG_PL) << __PRETTY_FUNCTION__;
-
-    disconnect(m_manager, SIGNAL(finished(QNetworkReply *)), this,
-               SLOT(replyReceived(QNetworkReply *)));
-
-    m_manager->deleteLater();
 }
 
 
-QList<NewsPluginMetadata> TheGuardianNewsPluginProvider::retrieve()
+QList<NewsPluginMetadata> TheGuardianNewsPluginProvider::data() const
 {
-    m_manager->get(QNetworkRequest(QUrl(QString(GUARDIAN_API_URL))));
-
     return m_metadata;
+}
+
+
+QString TheGuardianNewsPluginProvider::url() const
+{
+    return QString("%1?api-key=%2").arg(GUARDIAN_API_URL).arg(m_apiKey);
 }
 
 

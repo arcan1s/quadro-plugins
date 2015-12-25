@@ -31,7 +31,8 @@ class NewsPluginHelper : public QObject
     Q_OBJECT
 
 public:
-    explicit NewsPluginHelper(QObject *parent, const int provider, const int interval);
+    explicit NewsPluginHelper(QObject *parent, const int provider,
+                              const QString type, const int interval);
     virtual ~NewsPluginHelper();
     int bump();
     NewsPluginMetadata news() const;
@@ -41,7 +42,6 @@ public slots:
 
 private:
     int m_current = -1;
-    QList<NewsPluginMetadata> m_metadata;
     NewsPluginProvider *m_provider = nullptr;
     QTimer *m_timer = nullptr;
 };

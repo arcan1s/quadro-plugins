@@ -64,8 +64,6 @@ void NewsPlugin::action() const
 void NewsPlugin::init()
 {
     m_config = new NewsPluginSettings(nullptr);
-    m_helper = new NewsPluginHelper(this, m_configuration[QString("Provider")].toInt(),
-                                    m_configuration[QString("Retrieve")].toInt());
 }
 
 
@@ -80,6 +78,12 @@ void NewsPlugin::readSettings(const QString configPath)
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
     m_configuration = m_config->readSettings(configPath);
+
+    delete m_helper;
+    m_helper = nullptr;
+    m_helper = new NewsPluginHelper(this, m_configuration[QString("Provider")].toInt(),
+                                    m_configuration[QString("Type")].toString(),
+                                    m_configuration[QString("Retrieve")].toInt());
 }
 
 

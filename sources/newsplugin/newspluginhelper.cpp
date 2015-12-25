@@ -27,16 +27,20 @@
 
 
 NewsPluginHelper::NewsPluginHelper(QObject *parent, const int provider,
-                                   const int interval)
+                                   const QString type, const int interval)
     : QObject(parent)
 {
     qCDebug(LOG_PL) << __PRETTY_FUNCTION__;
 
     switch(provider) {
     case 0:
-        m_provider = new TheGuardianNewsPluginProvider(this);
+        m_provider = new TheGuardianNewsPluginProvider(this, type);
+        break;
+    case 1:
+        // TODO usatoday provider
+        break;
     case 2:
-        m_provider = new YandexNewsPluginProvider(this);
+        m_provider = new YandexNewsPluginProvider(this, type);
         break;
     default:
         qCCritical(LOG_PL) << "Unknown provider" << provider;
@@ -63,10 +67,12 @@ NewsPluginHelper::~NewsPluginHelper()
 
 int NewsPluginHelper::bump()
 {
-    if (m_metadata.isEmpty())
+    if ((m_provider == nullptr)
+        || (m_provider->data().isEmpty())) {
         return -1;
+    }
 
-    if (m_current == m_metadata.count() - 1)
+    if (m_current == m_provider->data().count() - 1)
         m_current = 0;
     else
         m_current++;
@@ -77,11 +83,14 @@ int NewsPluginHelper::bump()
 
 NewsPluginMetadata NewsPluginHelper::news() const
 {
-    return m_current == -1 ? NewsPluginMetadata() : m_metadata[m_current];
+    return m_current == -1 ? NewsPluginMetadata() : m_provider->data()[m_current];
 }
 
 
 void NewsPluginHelper::update()
 {
-    m_metadata = m_provider->retrieve();
+    if (m_provider == nullptr)
+        return;
+
+    m_provider->retrieve();
 }

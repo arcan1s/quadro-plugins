@@ -19,32 +19,28 @@
 #ifndef THEGUARDIANNEWSPLUGINPROVIDER_H
 #define THEGUARDIANNEWSPLUGINPROVIDER_H
 
-#include <QNetworkReply>
-
 #include "newspluginprovider.h"
 
 #ifndef GUARDIAN_API_URL
-#define GUARDIAN_API_URL "http://content.guardianapis.com/search?api-key=3b0d3b59-5cbe-4118-9f93-19a63bfd1904"
+#define GUARDIAN_API_URL "http://content.guardianapis.com/search"
 #endif /* GUARDIAN_API_URL */
 
-
-class QNetworkAccessManager;
-class QNetworkReply;
 
 class TheGuardianNewsPluginProvider : public NewsPluginProvider
 {
     Q_OBJECT
 
 public:
-    explicit TheGuardianNewsPluginProvider(QObject *parent);
+    explicit TheGuardianNewsPluginProvider(QObject *parent, const QString type);
     virtual ~TheGuardianNewsPluginProvider();
-    QList<NewsPluginMetadata> retrieve();
+    QList<NewsPluginMetadata> data() const;
+    QString url() const;
 
 private slots:
     void replyReceived(QNetworkReply *reply);
 
 private:
-    QNetworkAccessManager *m_manager;
+    QString m_apiKey;
     QList<NewsPluginMetadata> m_metadata;
 };
 
