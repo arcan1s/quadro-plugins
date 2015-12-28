@@ -57,12 +57,6 @@ QString YahooWeather::name() const
 }
 
 
-void YahooWeather::init()
-{
-    m_config = new YahooWeatherSettings(nullptr);
-}
-
-
 QSize YahooWeather::minimalSize() const
 {
     return QSize(1, 1);
@@ -72,6 +66,10 @@ QSize YahooWeather::minimalSize() const
 void YahooWeather::readSettings(const QString configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
+
+    delete m_config;
+    m_config = nullptr;
+    m_config = new YahooWeatherSettings(nullptr);
 
     m_configuration = m_config->readSettings(configPath);
 

@@ -38,7 +38,7 @@ public:
     QString data() const;
     QString name() const;
     void action() const {};
-    void init();
+    void init() {};
     QSize minimalSize() const;
     void quit(const QString) {};
     void readSettings(const QString configPath);

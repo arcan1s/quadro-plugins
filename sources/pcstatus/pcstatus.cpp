@@ -51,7 +51,6 @@ QString PCStatus::name() const
 
 void PCStatus::init()
 {
-    m_config = new PCStatusSettings(nullptr);
     m_helper = new PCStatusHelper(this);
 }
 
@@ -65,6 +64,10 @@ QSize PCStatus::minimalSize() const
 void PCStatus::readSettings(const QString configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
+
+    delete m_config;
+    m_config = nullptr;
+    m_config = new PCStatusSettings(nullptr);
 
     m_configuration = m_config->readSettings(configPath);
 }

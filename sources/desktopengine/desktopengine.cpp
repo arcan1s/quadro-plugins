@@ -67,8 +67,6 @@ void DesktopEngine::action() const
 
 void DesktopEngine::init()
 {
-    m_config = new DesktopEngineSettings(nullptr);
-
     m_process = new QProcess(nullptr);
     connect(m_process, SIGNAL(finished(int, QProcess::ExitStatus)), this,
             SLOT(updateData(int, QProcess::ExitStatus)));
@@ -86,6 +84,10 @@ QSize DesktopEngine::minimalSize() const
 void DesktopEngine::readSettings(const QString configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
+
+    delete m_config;
+    m_config = nullptr;
+    m_config = new DesktopEngineSettings(nullptr);
 
     m_configuration = m_config->readSettings(configPath);
 }

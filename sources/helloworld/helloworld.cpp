@@ -61,12 +61,6 @@ void HelloWorld::action() const
 }
 
 
-void HelloWorld::init()
-{
-    m_config = new HelloWorldSettings(nullptr);
-}
-
-
 QSize HelloWorld::minimalSize() const
 {
     return QSize(1, 1);
@@ -76,6 +70,10 @@ QSize HelloWorld::minimalSize() const
 void HelloWorld::readSettings(const QString configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
+
+    delete m_config;
+    m_config = nullptr;
+    m_config = new HelloWorldSettings(nullptr);
 
     m_configuration = m_config->readSettings(configPath);
 }

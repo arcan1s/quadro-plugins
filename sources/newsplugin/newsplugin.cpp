@@ -61,12 +61,6 @@ void NewsPlugin::action() const
 }
 
 
-void NewsPlugin::init()
-{
-    m_config = new NewsPluginSettings(nullptr);
-}
-
-
 QSize NewsPlugin::minimalSize() const
 {
     return QSize(1, 1);
@@ -76,6 +70,10 @@ QSize NewsPlugin::minimalSize() const
 void NewsPlugin::readSettings(const QString configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
+
+    delete m_config;
+    m_config = nullptr;
+    m_config = new NewsPluginSettings(nullptr);
 
     m_configuration = m_config->readSettings(configPath);
 

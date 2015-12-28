@@ -66,12 +66,6 @@ void DateTime::action() const
 }
 
 
-void DateTime::init()
-{
-    m_config = new DateTimeSettings(nullptr);
-}
-
-
 QSize DateTime::minimalSize() const
 {
     return QSize(1, 1);
@@ -81,6 +75,10 @@ QSize DateTime::minimalSize() const
 void DateTime::readSettings(const QString configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
+
+    delete m_config;
+    m_config = nullptr;
+    m_config = new DateTimeSettings(nullptr);
 
     m_configuration = m_config->readSettings(configPath);
 }
