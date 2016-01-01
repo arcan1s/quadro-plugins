@@ -61,12 +61,6 @@ void HelloWorld::action() const
 }
 
 
-QSize HelloWorld::minimalSize() const
-{
-    return QSize(1, 1);
-}
-
-
 void HelloWorld::readSettings(const QString configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
@@ -96,4 +90,10 @@ bool HelloWorld::writeSettings(const QString configPath) const
 int HelloWorld::updateInterval() const
 {
     return 0;
+}
+
+
+QSize HelloWorld::widgetSize() const
+{
+    return QSize(1, 1);
 }

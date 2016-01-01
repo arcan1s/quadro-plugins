@@ -66,12 +66,6 @@ void DateTime::action() const
 }
 
 
-QSize DateTime::minimalSize() const
-{
-    return QSize(1, 1);
-}
-
-
 void DateTime::readSettings(const QString configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
@@ -101,4 +95,10 @@ bool DateTime::writeSettings(const QString configPath) const
 int DateTime::updateInterval() const
 {
     return 1000;
+}
+
+
+QSize DateTime::widgetSize() const
+{
+    return QSize(1, 1);
 }

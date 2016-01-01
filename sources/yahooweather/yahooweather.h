@@ -39,7 +39,6 @@ public:
     QString name() const;
     void action() const {};
     void init() {};
-    QSize minimalSize() const;
     void quit(const QString) {};
     void readSettings(const QString configPath);
     void saveSettings();
@@ -47,6 +46,7 @@ public:
     void setArgs(QuadroCore *, const QVariantHash) {};
     void update() {};
     int updateInterval() const;
+    QSize widgetSize() const;
 
 private:
     QVariantHash m_configuration;

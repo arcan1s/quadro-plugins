@@ -74,13 +74,6 @@ void DesktopEngine::init()
 }
 
 
-QSize DesktopEngine::minimalSize() const
-{
-    return QSize(m_configuration[QString("Width")].toInt(),
-                 m_configuration[QString("Height")].toInt());
-}
-
-
 void DesktopEngine::readSettings(const QString configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
@@ -128,4 +121,11 @@ void DesktopEngine::updateData(int exitCode, QProcess::ExitStatus exitStatus)
 
     m_data = QTextCodec::codecForMib(106)->toUnicode(
         m_process->readAllStandardError()).trimmed();
+}
+
+
+QSize DesktopEngine::widgetSize() const
+{
+    return QSize(m_configuration[QString("Width")].toInt(),
+                 m_configuration[QString("Height")].toInt());
 }

@@ -57,12 +57,6 @@ QString YahooWeather::name() const
 }
 
 
-QSize YahooWeather::minimalSize() const
-{
-    return QSize(1, 1);
-}
-
-
 void YahooWeather::readSettings(const QString configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
@@ -98,4 +92,10 @@ bool YahooWeather::writeSettings(const QString configPath) const
 int YahooWeather::updateInterval() const
 {
     return 60 * 1000;
+}
+
+
+QSize YahooWeather::widgetSize() const
+{
+    return QSize(2, 1);
 }

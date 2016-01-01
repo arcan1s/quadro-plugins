@@ -61,12 +61,6 @@ void NewsPlugin::action() const
 }
 
 
-QSize NewsPlugin::minimalSize() const
-{
-    return QSize(1, 1);
-}
-
-
 void NewsPlugin::readSettings(const QString configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
@@ -108,4 +102,10 @@ void NewsPlugin::update()
 int NewsPlugin::updateInterval() const
 {
     return m_configuration[QString("Update")].toInt();
+}
+
+
+QSize NewsPlugin::widgetSize() const
+{
+    return QSize(2, 1);
 }

@@ -55,12 +55,6 @@ void PCStatus::init()
 }
 
 
-QSize PCStatus::minimalSize() const
-{
-    return QSize(1, 1);
-}
-
-
 void PCStatus::readSettings(const QString configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
@@ -116,4 +110,10 @@ void PCStatus::update()
 int PCStatus::updateInterval() const
 {
     return m_configuration[QString("Update")].toInt();
+}
+
+
+QSize PCStatus::widgetSize() const
+{
+    return QSize(1, 1);
 }
