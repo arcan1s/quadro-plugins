@@ -1,3 +1,6 @@
 [Quadro plugin]
+Author=Quadro team
 Comment=Show latest news in the world
 Name=newsplugin
+URL=https://arcanis.name/projects/quadro/
+Version=1.0

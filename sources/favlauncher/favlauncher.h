@@ -35,6 +35,7 @@ class FavLauncher : public QMainWindow, TabPluginInterface
 
 public:
     virtual ~FavLauncher();
+    FavLauncher *createInstance();
     inline QSize itemSize();
     QWidget *configWidget() { return nullptr; };
     QString name() const;

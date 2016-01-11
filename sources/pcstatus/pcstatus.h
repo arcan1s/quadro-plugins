@@ -33,6 +33,7 @@ class PCStatus : public QObject, PluginInterface
 
 public:
     virtual ~PCStatus();
+    PCStatus *createInstance();
     QString background() const { return QString(); };
     QWidget *configWidget();
     QString data() const;

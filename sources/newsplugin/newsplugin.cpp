@@ -30,6 +30,12 @@ NewsPlugin::~NewsPlugin()
 }
 
 
+NewsPlugin *NewsPlugin::createInstance()
+{
+    return new NewsPlugin();
+}
+
+
 QString NewsPlugin::background() const
 {
     return m_helper->news().image;

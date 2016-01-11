@@ -1,3 +1,6 @@
 [Quadro plugin]
+Author=Quadro team
 Comment=Simple static plugin
 Name=helloworld
+URL=https://arcanis.name/projects/quadro/
+Version=1.0

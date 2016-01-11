@@ -1,3 +1,6 @@
 [Quadro plugin]
+Author=Quadro team
 Comment=Plugin which shows current PC common information
 Name=pcstatus
+URL=https://arcanis.name/projects/quadro/
+Version=1.0

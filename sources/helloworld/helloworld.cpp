@@ -31,6 +31,12 @@ HelloWorld::~HelloWorld()
 }
 
 
+HelloWorld *HelloWorld::createInstance()
+{
+    return new HelloWorld();
+}
+
+
 QString HelloWorld::background() const
 {
     return m_configuration[QString("Background")].toString();

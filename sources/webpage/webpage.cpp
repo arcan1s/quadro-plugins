@@ -36,6 +36,12 @@ WebPage::~WebPage()
 }
 
 
+WebPage *WebPage::createInstance()
+{
+    return new WebPage();
+}
+
+
 QWidget *WebPage::configWidget()
 {
     return m_config;

@@ -29,6 +29,12 @@ FavLauncher::~FavLauncher()
 }
 
 
+FavLauncher *FavLauncher::createInstance()
+{
+    return new FavLauncher();
+}
+
+
 QSize FavLauncher::itemSize()
 {
     return QSize(m_appConfiguration[QString("GridSize")].toFloat(),
@@ -53,6 +59,7 @@ void FavLauncher::init()
     // plugins
     // TODO read from configuration
     QStringList plugins = QStringList() << "datetime" << "pcstatus" << "newsplugin" << "pcstatus" << "yahooweather";
+    PluginConfigWidget *cfgWidget = new PluginConfigWidget(this, "plugin", plugins);
     for (auto plugin : plugins) {
         int index = m_core->plugin()->loadPlugin(plugin);
         if (index == -1) {
@@ -70,8 +77,10 @@ void FavLauncher::init()
             metadata[QString("Index")] = index;
             metadata[QString("Plugin")] = plugin;
             m_plugins.append(metadata);
+            cfgWidget->addPluginConfigurationPage(plugin, item->configWidget());
         }
     }
+    cfgWidget->show();
 
     // favorites
     QMap<QString, ApplicationItem *> apps = m_core->favorites()->applications();

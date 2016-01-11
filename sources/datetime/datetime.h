@@ -32,6 +32,7 @@ class DateTime : public QObject, PluginInterface
 
 public:
     virtual ~DateTime();
+    DateTime *createInstance();
     QString background() const;
     QWidget *configWidget();
     QString data() const;

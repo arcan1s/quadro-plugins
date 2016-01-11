@@ -33,6 +33,7 @@ class NewsPlugin : public QObject, PluginInterface
 
 public:
     virtual ~NewsPlugin();
+    NewsPlugin *createInstance();
     QString background() const;
     QWidget *configWidget();
     QString data() const;

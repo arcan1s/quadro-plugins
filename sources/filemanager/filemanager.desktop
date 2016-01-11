@@ -1,3 +1,6 @@
 [Quadro tabplugin]
+Author=Quadro team
 Comment=Filemanager tab for Quadro
 Name=filemanager
+URL=https://arcanis.name/projects/quadro/
+Version=1.0

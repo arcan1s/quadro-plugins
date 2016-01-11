@@ -31,6 +31,12 @@ YahooWeather::~YahooWeather()
 }
 
 
+YahooWeather *YahooWeather::createInstance()
+{
+    return new YahooWeather();
+}
+
+
 QString YahooWeather::background() const
 {
     // TODO

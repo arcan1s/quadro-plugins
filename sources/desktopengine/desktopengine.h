@@ -32,7 +32,8 @@ class DesktopEngine : public QObject, PluginInterface
     Q_INTERFACES(PluginInterface)
 
 public:
-    ~DesktopEngine();
+    virtual ~DesktopEngine();
+    DesktopEngine *createInstance();
     QString background() const;
     QWidget *configWidget();
     QString data() const;

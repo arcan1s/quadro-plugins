@@ -1,3 +1,6 @@
 [Quadro plugin]
+Author=Quadro team
 Comment=Shows weather by using Yahoo! Weather API
 Name=yahooweather
+URL=https://arcanis.name/projects/quadro/
+Version=1.0

@@ -48,6 +48,12 @@ FileManager::~FileManager()
 }
 
 
+FileManager *FileManager::createInstance()
+{
+    return new FileManager();
+}
+
+
 QSize FileManager::itemSize()
 {
     return QSize(m_appConfiguration[QString("GridSize")].toInt(),

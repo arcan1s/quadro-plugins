@@ -44,6 +44,12 @@ AppLauncher::~AppLauncher()
 }
 
 
+AppLauncher *AppLauncher::createInstance()
+{
+    return new AppLauncher();
+}
+
+
 QSize AppLauncher::itemSize()
 {
     return QSize(m_appConfiguration[QString("GridSize")].toFloat(),

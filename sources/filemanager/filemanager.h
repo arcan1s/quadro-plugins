@@ -43,6 +43,7 @@ class FileManager : public QMainWindow, TabPluginInterface
 
 public:
     virtual ~FileManager();
+    FileManager *createInstance();
     inline QSize itemSize();
     QWidget *configWidget();
     QString name() const;

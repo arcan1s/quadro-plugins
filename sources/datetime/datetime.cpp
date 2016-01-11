@@ -32,6 +32,12 @@ DateTime::~DateTime()
 }
 
 
+DateTime *DateTime::createInstance()
+{
+    return new DateTime();
+}
+
+
 QString DateTime::background() const
 {
     return m_configuration[QString("Background")].toString();

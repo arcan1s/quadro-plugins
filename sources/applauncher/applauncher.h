@@ -38,6 +38,7 @@ class AppLauncher : public QMainWindow, TabPluginInterface
 
 public:
     virtual ~AppLauncher();
+    AppLauncher *createInstance();
     inline QSize itemSize();
     QWidget *configWidget() { return nullptr; };
     QString name() const;

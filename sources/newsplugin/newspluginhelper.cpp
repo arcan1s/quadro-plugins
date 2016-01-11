@@ -51,6 +51,8 @@ NewsPluginHelper::NewsPluginHelper(QObject *parent, const int provider,
     m_timer->setInterval(1000 * interval);
     m_timer->setSingleShot(false);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
+
+    update();
 }
 
 

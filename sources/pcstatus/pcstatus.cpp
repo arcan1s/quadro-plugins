@@ -31,6 +31,12 @@ PCStatus::~PCStatus()
 }
 
 
+PCStatus *PCStatus::createInstance()
+{
+    return new PCStatus();
+}
+
+
 QWidget *PCStatus::configWidget()
 {
     return m_config;

@@ -36,6 +36,12 @@ DesktopEngine::~DesktopEngine()
 }
 
 
+DesktopEngine *DesktopEngine::createInstance()
+{
+    return new DesktopEngine();
+}
+
+
 QString DesktopEngine::background() const
 {
     return m_configuration[QString("Background")].toString();

@@ -33,6 +33,7 @@ class YahooWeather : public QObject, PluginInterface
 
 public:
     virtual ~YahooWeather();
+    YahooWeather *createInstance();
     QString background() const;
     QWidget *configWidget();
     QString data() const;

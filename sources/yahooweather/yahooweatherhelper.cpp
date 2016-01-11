@@ -43,6 +43,8 @@ YahooWeatherHelper::YahooWeatherHelper(QObject *parent, const QString city,
     m_timer->setInterval(1000 * 60 * 60);
     m_timer->setSingleShot(false);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(update()));
+
+    update();
 }
 
 

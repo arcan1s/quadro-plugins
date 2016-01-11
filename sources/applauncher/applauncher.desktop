@@ -1,3 +1,6 @@
 [Quadro tabplugin]
+Author=Quadro team
 Comment=Application launcher tab for Quadro
 Name=applauncher
+URL=https://arcanis.name/projects/quadro/
+Version=1.0

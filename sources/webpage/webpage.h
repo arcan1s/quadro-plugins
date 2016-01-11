@@ -35,6 +35,7 @@ class WebPage : public QMainWindow, TabPluginInterface
 
 public:
     virtual ~WebPage();
+    WebPage *createInstance();
     QWidget *configWidget();
     QString name() const;
     QWidget *widget();

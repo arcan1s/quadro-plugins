@@ -32,6 +32,7 @@ class HelloWorld : public QObject, PluginInterface
 
 public:
     virtual ~HelloWorld();
+    HelloWorld *createInstance();
     QString background() const;
     QWidget *configWidget();
     QString data() const;
