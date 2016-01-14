@@ -52,8 +52,8 @@ AppLauncher *AppLauncher::createInstance()
 
 QSize AppLauncher::itemSize()
 {
-    return QSize(m_appConfiguration[QString("GridSize")].toFloat(),
-                 m_appConfiguration[QString("GridSize")].toFloat());
+    return QSize(m_core->config()->property("GridSize").toInt(),
+                 m_core->config()->property("GridSize").toInt());
 }
 
 
@@ -124,11 +124,8 @@ void AppLauncher::readSettings(const QString configPath)
 }
 
 
-void AppLauncher::setArgs(QuadroCore *core, const QVariantHash settings)
+void AppLauncher::setArgs(QuadroCore *core)
 {
-    qCDebug(LOG_PL) << "Application settings" << settings;
-
-    m_appConfiguration = settings;
     m_core = core;
 
     // create ui

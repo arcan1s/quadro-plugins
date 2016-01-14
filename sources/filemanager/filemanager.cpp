@@ -56,8 +56,8 @@ FileManager *FileManager::createInstance()
 
 QSize FileManager::itemSize()
 {
-    return QSize(m_appConfiguration[QString("GridSize")].toInt(),
-                 m_appConfiguration[QString("GridSize")].toInt());
+    return QSize(m_core->config()->property("GridSize").toInt(),
+                 m_core->config()->property("GridSize").toInt());
 }
 
 
@@ -133,11 +133,8 @@ bool FileManager::writeSettings(const QString configPath) const
 }
 
 
-void FileManager::setArgs(QuadroCore *core, const QVariantHash settings)
+void FileManager::setArgs(QuadroCore *core)
 {
-    qCDebug(LOG_PL) << "Application settings" << settings;
-
-    m_appConfiguration = settings;
     m_core = core;
     m_config = new FileManagerSettings();
 
@@ -252,6 +249,7 @@ void FileManager::openEntry(const QFileInfo entry)
         loadPage(entry.absoluteFilePath());
     } else {
         m_core->filemanager()->openFile(entry);
+        m_core->documents()->addItem(entry.absoluteFilePath());
         DBusOperations::sendRequestToUi(QString("Hide"));
     }
 

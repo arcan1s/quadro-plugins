@@ -44,14 +44,13 @@ public:
     void readSettings(const QString configPath);
     void saveSettings();
     bool writeSettings(const QString configPath) const;
-    void setArgs(QuadroCore *, const QVariantHash settings);
+    void setArgs(QuadroCore *);
 
 private:
     // ui
     WebPageSettings *m_config = nullptr;
     WebAppWidget *m_widget = nullptr;
     // backend
-    QVariantHash m_appConfiguration;
     QVariantHash m_configuration;
 };
 

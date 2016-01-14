@@ -48,7 +48,7 @@ public:
     void readSettings(const QString configPath);
     void saveSettings() { };
     bool writeSettings(const QString) const { return true; };
-    void setArgs(QuadroCore *core, const QVariantHash settings);
+    void setArgs(QuadroCore *core);
 
 public slots:
     void changeCategory(const int index);
@@ -74,7 +74,6 @@ private:
     QToolBar *m_toolBar = nullptr;
     Qt::ToolBarArea m_toolBarArea = Qt::TopToolBarArea;
     // backend
-    QVariantHash m_appConfiguration;
     QuadroCore *m_core = nullptr;
     void createActions();
     void initCategory(const QString category, QWidget *widget);

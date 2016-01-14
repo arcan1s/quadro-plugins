@@ -105,11 +105,8 @@ bool WebPage::writeSettings(const QString configPath) const
 }
 
 
-void WebPage::setArgs(QuadroCore *, const QVariantHash settings)
+void WebPage::setArgs(QuadroCore *)
 {
-    qCDebug(LOG_PL) << "Application settings" << settings;
-
-    m_appConfiguration = settings;
     m_config = new WebPageSettings();
 
     // ui

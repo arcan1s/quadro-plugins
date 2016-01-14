@@ -43,7 +43,7 @@ public:
     void readSettings(const QString configPath);
     void saveSettings();
     bool writeSettings(const QString configPath) const;
-    void setArgs(QuadroCore *, const QVariantHash) {};
+    void setArgs(QuadroCore *) {};
     void update() {};
     int updateInterval() const;
     QSize widgetSize() const;

@@ -53,7 +53,7 @@ public:
     void readSettings(const QString configPath);
     void saveSettings();
     bool writeSettings(const QString configPath) const;
-    void setArgs(QuadroCore *core, const QVariantHash settings);
+    void setArgs(QuadroCore *core);
 
 public slots:
     void changePage(const int index);
@@ -79,7 +79,6 @@ private:
     QStackedWidget *m_stackedWidget = nullptr;
     QToolBar *m_toolBar = nullptr;
     // backend
-    QVariantHash m_appConfiguration;
     QVariantHash m_configuration;
     QuadroCore *m_core = nullptr;
     int m_searchIndex = 0;
