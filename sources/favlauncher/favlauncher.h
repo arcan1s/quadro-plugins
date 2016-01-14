@@ -26,6 +26,7 @@
 
 class PluginContainer;
 class QuadroWidget;
+class StandaloneAppWidget;
 
 class FavLauncher : public QMainWindow, TabPluginInterface
 {
@@ -45,17 +46,24 @@ public:
     void readSettings(const QString configPath) {};
     void saveSettings() { };
     bool writeSettings(const QString) const { return true; };
-    void setArgs(QuadroCore *core, const QVariantHash settings);
+    void setArgs(QuadroCore *core);
 
 private slots:
+    void hideMainWindow();
+    void openFile(const QFileInfo entry);
+    void removeContainer();
     void runApplication();
+    void runStandaloneApplication(const QStringList exec, const QString);
 
 private:
     // ui
     PluginContainer *m_container = nullptr;
+    QuadroWidget *m_documents = nullptr;
     QuadroWidget *m_favorites = nullptr;
+    QuadroWidget *m_recent = nullptr;
+    QWidget *m_recentWidget = nullptr;
+    StandaloneAppWidget *m_standaloneApp = nullptr;
     // backend
-    QVariantHash m_appConfiguration;
     QuadroCore *m_core = nullptr;
     QList<QVariantHash> m_plugins;
 };
