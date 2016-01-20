@@ -211,7 +211,6 @@ void AppLauncher::runCustomApplication()
                               tr("Error"),
                               tr("Could not run application %1").arg(exec));
     }
-
 }
 
 

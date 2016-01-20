@@ -26,6 +26,7 @@
 
 class PluginContainer;
 class QuadroWidget;
+class SearchBar;
 class StandaloneAppWidget;
 
 class FavLauncher : public QMainWindow, TabPluginInterface
@@ -48,12 +49,17 @@ public:
     bool writeSettings(const QString) const { return true; };
     void setArgs(QuadroCore *core);
 
+protected:
+    bool eventFilter(QObject *object, QEvent *event);
+
 private slots:
     void hideMainWindow();
     void openFile(const QFileInfo entry);
     void removeContainer();
     void runApplication();
+    void runCustomApplication();
     void runStandaloneApplication(const QStringList exec, const QString);
+    void showSearchResults(const QString search);
 
 private:
     // ui
@@ -61,11 +67,14 @@ private:
     QuadroWidget *m_documents = nullptr;
     QuadroWidget *m_favorites = nullptr;
     QuadroWidget *m_recent = nullptr;
+    SearchBar *m_searchBar = nullptr;
+    QuadroWidget *m_searchWidget = nullptr;
     QWidget *m_recentWidget = nullptr;
     StandaloneAppWidget *m_standaloneApp = nullptr;
     // backend
     QuadroCore *m_core = nullptr;
     QList<QVariantHash> m_plugins;
+    void createActions();
 };
 
 

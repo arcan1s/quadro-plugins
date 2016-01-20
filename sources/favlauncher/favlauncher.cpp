@@ -19,6 +19,9 @@
 #include "favlauncher.h"
 
 #include <QHBoxLayout>
+#include <QKeyEvent>
+#include <QMessageBox>
+#include <QVBoxLayout>
 
 #include <quadroui/quadroui.h>
 
@@ -38,6 +41,8 @@ FavLauncher::~FavLauncher()
     delete m_documents;
     delete m_favorites;
     delete m_recent;
+    delete m_searchBar;
+    delete m_searchWidget;
     delete m_standaloneApp;
     delete m_recentWidget;
 }
@@ -151,17 +156,54 @@ void FavLauncher::setArgs(QuadroCore *core)
     recentLayout->addWidget(m_recent);
     recentLayout->addWidget(m_documents);
     m_recentWidget->setLayout(recentLayout);
+    // search information
+    m_searchBar = new SearchBar(widget);
+    m_searchBar->setPlaceholderText(tr("Type for search"));
+    m_searchWidget = new QuadroWidget(widget, m_core->config()->property("GridSize").toInt(),
+                                      QString(), Qt::ScrollBarAlwaysOff, Qt::ScrollBarAlwaysOff);
+    m_searchWidget->hide();
 
     // layout
-    QHBoxLayout *layout = new QHBoxLayout(widget);
+    // generic
+    QVBoxLayout *genericLayout = new QVBoxLayout(widget);
+    genericLayout->setContentsMargins(0, 0, 0, 0);
+    QWidget *genericWidget = new QWidget(widget);
+    genericLayout->addWidget(m_searchBar);
+    genericLayout->addWidget(genericWidget);
+    // data
+    QHBoxLayout *layout = new QHBoxLayout(genericWidget);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(m_container);
     layout->addWidget(m_recentWidget);
+    layout->addWidget(m_searchWidget);
     layout->addWidget(m_favorites);
-    widget->setLayout(layout);
+    genericWidget->setLayout(layout);
 
     setCentralWidget(widget);
+    // handle child events
+    m_container->installEventFilter(this);
+    m_documents->installEventFilter(this);
+    m_favorites->installEventFilter(this);
+    m_recent->installEventFilter(this);
+    m_searchBar->installEventFilter(this);
+    m_searchWidget->installEventFilter(this);
+    m_recentWidget->installEventFilter(this);
+
+    createActions();
 }
+
+
+bool FavLauncher::eventFilter(QObject *object, QEvent *event)
+{
+    // move event if key pressed
+    if ((event->type() == QEvent::KeyPress)
+        && (static_cast<QKeyEvent *>(event)->key() != Qt::Key_Return)) {
+        m_searchBar->keyPressed(static_cast<QKeyEvent *>(event));
+    }
+
+    return QObject::eventFilter(object, event);
+}
+
 
 
 void FavLauncher::hideMainWindow()
@@ -198,6 +240,29 @@ void FavLauncher::runApplication()
 }
 
 
+void FavLauncher::runCustomApplication()
+{
+    QString exec = m_searchBar->text();
+    if (exec.isEmpty()) {
+        qCWarning(LOG_PL) << "Empty cmd, nothing to do";
+        return;
+    }
+    m_searchBar->clear();
+
+    ApplicationItem *item = new ApplicationItem(this, exec);
+    item->setExec(exec);
+
+    if (item->launch()) {
+        m_core->recently()->addItem(item);
+        DBusOperations::sendRequestToUi(QString("Hide"));
+    } else {
+        QMessageBox::critical(this,
+                              tr("Error"),
+                              tr("Could not run application %1").arg(exec));
+    }
+}
+
+
 void FavLauncher::runStandaloneApplication(const QStringList exec, const QString)
 {
     if (m_standaloneApp != nullptr) {
@@ -211,4 +276,36 @@ void FavLauncher::runStandaloneApplication(const QStringList exec, const QString
 
     m_recentWidget->hide();
     static_cast<QHBoxLayout *>(centralWidget()->layout())->insertWidget(1, m_standaloneApp);
+}
+
+
+void FavLauncher::showSearchResults(const QString search)
+{
+    qCDebug(LOG_PL) << "Search substring" << search;
+
+    m_searchWidget->clearLayout();
+
+    // return if none to do here
+    if (search.isEmpty())
+        return m_searchWidget->hide();
+    // add items
+    QMap<QString, ApplicationItem *> apps = m_core->recently()->applicationsBySubstr(search);
+    QMap<QString, ApplicationItem *> launcherApps = m_core->launcher()->applicationsBySubstr(search);
+    for (auto app : apps.values() + launcherApps.values()) {
+        QWidget *wItem = new AppIconWidget(app, itemSize(), m_searchWidget->widget());
+        m_searchWidget->widget()->layout()->addWidget(wItem);
+        connect(wItem, SIGNAL(widgetPressed()), this, SLOT(runApplication()));
+        connect(wItem, SIGNAL(applicationIsRunning()), this, SLOT(hideMainWindow()));
+        connect(wItem, SIGNAL(standaloneApplicaitonRequested(const QStringList, const QString)),
+                this, SLOT(runStandaloneApplication(const QStringList, const QString)));
+    }
+
+    return m_searchWidget->show();
+}
+
+
+void FavLauncher::createActions()
+{
+    connect(m_searchBar, SIGNAL(returnPressed()), this, SLOT(runCustomApplication()));
+    connect(m_searchBar, SIGNAL(textChanged(QString)), this, SLOT(showSearchResults(QString)));
 }
