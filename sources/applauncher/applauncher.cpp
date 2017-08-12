@@ -50,13 +50,6 @@ AppLauncher *AppLauncher::createInstance()
 }
 
 
-QSize AppLauncher::itemSize()
-{
-    return QSize(m_core->config()->property("GridSize").toInt(),
-                 m_core->config()->property("GridSize").toInt());
-}
-
-
 QString AppLauncher::name() const
 {
     return tr("Launcher");
@@ -84,18 +77,18 @@ void AppLauncher::init()
     QStringList categories = m_core->launcher()->availableCategories();
     for (auto cat : categories) {
         m_categoryButtons.append(m_toolBar->addAction(cat));
-        m_categoryWidgets.append(new QuadroWidget(this, itemSize().width()));
+        m_categoryWidgets.append(new QuadroWidget(this, m_core->config()->gridSize()));
         m_stackedWidget->addWidget(m_categoryWidgets.last());
         initCategory(cat, m_categoryWidgets.last()->widget());
     }
 
     // search widget
-    m_categoryWidgets.append(new QuadroWidget(this, itemSize().width()));
+    m_categoryWidgets.append(new QuadroWidget(this, m_core->config()->gridSize()));
     m_stackedWidget->addWidget(m_categoryWidgets.last());
 }
 
 
-void AppLauncher::quit(const QString configPath)
+void AppLauncher::quit(const QString &configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
@@ -110,7 +103,7 @@ void AppLauncher::quit(const QString configPath)
 }
 
 
-void AppLauncher::readSettings(const QString configPath)
+void AppLauncher::readSettings(const QString &configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
@@ -238,7 +231,7 @@ void AppLauncher::showSearchResults(const QString search)
     QMap<QString, ApplicationItem *> apps = m_core->recently()->applicationsBySubstr(search);
     QMap<QString, ApplicationItem *> launcherApps = m_core->launcher()->applicationsBySubstr(search);
     for (auto app : apps.values() + launcherApps.values()) {
-        QWidget *wItem = new AppIconWidget(app, itemSize(), m_categoryWidgets.last()->widget());
+        QWidget *wItem = new AppIconWidget(app, m_core->config()->gridSize(), m_categoryWidgets.last()->widget());
         m_categoryWidgets.last()->widget()->layout()->addWidget(wItem);
         connect(wItem, SIGNAL(widgetPressed()), this, SLOT(runApplication()));
         connect(wItem, SIGNAL(applicationIsRunning()), this, SLOT(hideMainWindow()));
@@ -246,7 +239,8 @@ void AppLauncher::showSearchResults(const QString search)
                 this, SLOT(runStandaloneApplication(const QStringList, const QString)));
     }
 
-    return m_stackedWidget->setCurrentIndex(m_stackedWidget->count() - 1);
+    m_stackedWidget->setCurrentIndex(m_stackedWidget->count() - 1);
+    m_categoryWidgets.last()->resetFocus();
 }
 
 
@@ -265,7 +259,7 @@ void AppLauncher::initCategory(const QString category, QWidget *widget)
 
     QMap<QString, ApplicationItem *> apps = m_core->launcher()->applicationsByCategory(category);
     for (auto app : apps.values()) {
-            QWidget *wItem = new AppIconWidget(app, itemSize(), widget);
+            QWidget *wItem = new AppIconWidget(app, m_core->config()->gridSize(), widget);
         widget->layout()->addWidget(wItem);
         connect(wItem, SIGNAL(widgetPressed()), this, SLOT(runApplication()));
         connect(wItem, SIGNAL(applicationIsRunning()), this, SLOT(hideMainWindow()));

@@ -39,15 +39,14 @@ class AppLauncher : public QMainWindow, TabPluginInterface
 public:
     virtual ~AppLauncher();
     AppLauncher *createInstance();
-    inline QSize itemSize();
     QWidget *configWidget() { return nullptr; };
     QString name() const;
     QWidget *widget();
     void init();
-    void quit(const QString configPath);
-    void readSettings(const QString configPath);
+    void quit(const QString &configPath);
+    void readSettings(const QString &configPath);
     void saveSettings() { };
-    bool writeSettings(const QString) const { return true; };
+    bool writeSettings(const QString &) const { return true; };
     void setArgs(QuadroCore *core);
 
 public slots:

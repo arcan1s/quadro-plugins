@@ -63,7 +63,7 @@ QString YahooWeather::name() const
 }
 
 
-void YahooWeather::readSettings(const QString configPath)
+void YahooWeather::readSettings(const QString &configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
@@ -87,7 +87,7 @@ void YahooWeather::saveSettings()
 }
 
 
-bool YahooWeather::writeSettings(const QString configPath) const
+bool YahooWeather::writeSettings(const QString &configPath) const
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 

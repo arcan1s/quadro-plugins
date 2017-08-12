@@ -54,13 +54,6 @@ FileManager *FileManager::createInstance()
 }
 
 
-QSize FileManager::itemSize()
-{
-    return QSize(m_core->config()->property("GridSize").toInt(),
-                 m_core->config()->property("GridSize").toInt());
-}
-
-
 QWidget *FileManager::configWidget()
 {
     return m_config;
@@ -85,7 +78,7 @@ void FileManager::init()
                    m_configuration[QString("BarPosition")].toInt()), m_toolBar);
 
     // search widget
-    m_pageWidgets.append(new QuadroWidget(this, itemSize().width()));
+    m_pageWidgets.append(new QuadroWidget(this, m_core->config()->gridSize()));
     m_pageButtons.append(m_toolBar->addAction("search"));
     m_pageButtons.last()->setVisible(false);
     m_stackedWidget->addWidget(m_pageWidgets.last());
@@ -94,7 +87,7 @@ void FileManager::init()
 }
 
 
-void FileManager::quit(const QString configPath)
+void FileManager::quit(const QString &configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
@@ -109,7 +102,7 @@ void FileManager::quit(const QString configPath)
 }
 
 
-void FileManager::readSettings(const QString configPath)
+void FileManager::readSettings(const QString &configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
@@ -125,7 +118,7 @@ void FileManager::saveSettings()
 }
 
 
-bool FileManager::writeSettings(const QString configPath) const
+bool FileManager::writeSettings(const QString &configPath) const
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
@@ -177,7 +170,7 @@ void FileManager::createPage(const QString path)
 
     // create
     int index = m_stackedWidget->count() == 1 ? 0 : m_stackedWidget->currentIndex() + 1;
-    m_pageWidgets.insert(index, new QuadroWidget(this, itemSize().width(), path));
+    m_pageWidgets.insert(index, new QuadroWidget(this, m_core->config()->gridSize(), path));
     m_stackedWidget->insertWidget(index, m_pageWidgets[index]);
     QAction *act = new QAction(m_toolBar);
     m_toolBar->insertAction(m_pageButtons[index], act);
@@ -186,7 +179,7 @@ void FileManager::createPage(const QString path)
     QFileInfoList entries = m_core->filemanager()->directoryEntries(path, m_configuration[QString("ShowHidden")].toBool());
     for (auto entry : entries) {
         QWidget *wItem = new FileIconWidget(entry, m_core->filemanager()->iconByFileName(entry.absoluteFilePath()),
-                                            itemSize(), m_pageWidgets[index]->widget());
+                                            m_core->config()->gridSize(), m_pageWidgets[index]->widget());
         m_pageWidgets[index]->widget()->layout()->addWidget(wItem);
         connect(wItem, SIGNAL(openFile(const QFileInfo)), this, SLOT(openEntry(const QFileInfo)));
         connect(wItem, SIGNAL(openDirInNewTab(const QFileInfo)), this,
@@ -208,7 +201,7 @@ void FileManager::loadPage(const QString path)
     QFileInfoList entries = m_core->filemanager()->directoryEntries(path, m_configuration[QString("ShowHidden")].toBool());
     for (auto entry : entries) {
         QWidget *wItem = new FileIconWidget(entry, m_core->filemanager()->iconByFileName(entry.absoluteFilePath()),
-                                            itemSize(), m_pageWidgets[index]->widget());
+                                            m_core->config()->gridSize(), m_pageWidgets[index]->widget());
         m_pageWidgets[index]->widget()->layout()->addWidget(wItem);
         connect(wItem, SIGNAL(openFile(const QFileInfo)), this, SLOT(openEntry(const QFileInfo)));
         connect(wItem, SIGNAL(openDirInNewTab(const QFileInfo)), this,
@@ -287,7 +280,7 @@ void FileManager::showSearchResults(const QString search)
     int count = 0;
     for (auto entry : entries) {
         QWidget *wItem = new FileIconWidget(entry, m_core->filemanager()->iconByFileName(entry.absoluteFilePath()),
-                                            itemSize(), m_pageWidgets.last()->widget());
+                                            m_core->config()->gridSize(), m_pageWidgets.last()->widget());
         m_pageWidgets.last()->widget()->layout()->addWidget(wItem);
         connect(wItem, SIGNAL(openFile(const QFileInfo)), this,
                 SLOT(openEntryInNewTab(const QFileInfo)));

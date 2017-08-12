@@ -72,7 +72,7 @@ void DateTime::action() const
 }
 
 
-void DateTime::readSettings(const QString configPath)
+void DateTime::readSettings(const QString &configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
@@ -90,7 +90,7 @@ void DateTime::saveSettings()
 }
 
 
-bool DateTime::writeSettings(const QString configPath) const
+bool DateTime::writeSettings(const QString &configPath) const
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 

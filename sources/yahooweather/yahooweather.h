@@ -40,10 +40,10 @@ public:
     QString name() const;
     void action() const {};
     void init() {};
-    void quit(const QString) {};
-    void readSettings(const QString configPath);
+    void quit(const QString &) {};
+    void readSettings(const QString &configPath);
     void saveSettings();
-    bool writeSettings(const QString configPath) const;
+    bool writeSettings(const QString &configPath) const;
     void setArgs(QuadroCore *) {};
     void update() {};
     int updateInterval() const;

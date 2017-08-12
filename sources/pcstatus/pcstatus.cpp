@@ -61,7 +61,7 @@ void PCStatus::init()
 }
 
 
-void PCStatus::readSettings(const QString configPath)
+void PCStatus::readSettings(const QString &configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
@@ -79,7 +79,7 @@ void PCStatus::saveSettings()
 }
 
 
-bool PCStatus::writeSettings(const QString configPath) const
+bool PCStatus::writeSettings(const QString &configPath) const
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 

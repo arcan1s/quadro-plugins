@@ -67,7 +67,7 @@ void NewsPlugin::action() const
 }
 
 
-void NewsPlugin::readSettings(const QString configPath)
+void NewsPlugin::readSettings(const QString &configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
@@ -91,7 +91,7 @@ void NewsPlugin::saveSettings()
 }
 
 
-bool NewsPlugin::writeSettings(const QString configPath) const
+bool NewsPlugin::writeSettings(const QString &configPath) const
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 

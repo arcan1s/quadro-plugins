@@ -67,7 +67,7 @@ void HelloWorld::action() const
 }
 
 
-void HelloWorld::readSettings(const QString configPath)
+void HelloWorld::readSettings(const QString &configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
@@ -85,7 +85,7 @@ void HelloWorld::saveSettings()
 }
 
 
-bool HelloWorld::writeSettings(const QString configPath) const
+bool HelloWorld::writeSettings(const QString &configPath) const
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 

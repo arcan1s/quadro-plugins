@@ -40,10 +40,10 @@ public:
     QString name() const;
     QWidget *widget();
     void init();
-    void quit(const QString configPath);
-    void readSettings(const QString configPath);
+    void quit(const QString &configPath);
+    void readSettings(const QString &configPath);
     void saveSettings();
-    bool writeSettings(const QString configPath) const;
+    bool writeSettings(const QString &configPath) const;
     void setArgs(QuadroCore *);
 
 private:

@@ -68,7 +68,7 @@ void WebPage::init()
 }
 
 
-void WebPage::quit(const QString configPath)
+void WebPage::quit(const QString &configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
@@ -81,7 +81,7 @@ void WebPage::quit(const QString configPath)
 }
 
 
-void WebPage::readSettings(const QString configPath)
+void WebPage::readSettings(const QString &configPath)
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
@@ -97,7 +97,7 @@ void WebPage::saveSettings()
 }
 
 
-bool WebPage::writeSettings(const QString configPath) const
+bool WebPage::writeSettings(const QString &configPath) const
 {
     qCDebug(LOG_PL) << "Configuration path" << configPath;
 
