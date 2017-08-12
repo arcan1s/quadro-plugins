@@ -1,0 +1,13 @@
+-I/usr/include
+-I/usr/include
+-DQT_NETWORK_LIB
+-DQT_CORE_LIB
+-DQT_CORE_LIB
+-DQT_DBUS_LIB
+-DQT_CORE_LIB
+-DQT_WIDGETS_LIB
+-DQT_GUI_LIB
+-DQT_CORE_LIB
+-o
+/home/arcanis/Documents/github/quadro-plugins/sources/cmake-build-debug/applauncher/moc_AppLauncher.cpp
+/home/arcanis/Documents/github/quadro-plugins/sources/applauncher/AppLauncher.h
